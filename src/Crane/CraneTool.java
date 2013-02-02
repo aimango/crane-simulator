@@ -6,9 +6,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
-import java.util.Timer;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -126,11 +124,11 @@ public class CraneTool extends JPanel {
  
 class CraneController extends MouseInputAdapter {
     CraneTool component;
-    Point offset = new Point();
+    Point mouseLoc = new Point();
     boolean dragging = false;
  
-    public CraneController(CraneTool gdad) {
-        component = gdad;
+    public CraneController(CraneTool tool) {
+        component = tool;
         component.addMouseListener(this);
         component.addMouseMotionListener(this);
     }
@@ -138,11 +136,8 @@ class CraneController extends MouseInputAdapter {
     public void mousePressed(MouseEvent e) {
         Point p = e.getPoint();
         Polygon poly = component.poly;
-       // Rectangle r = component.rect;
         if(poly.contains(p)) {
-        	offset = e.getPoint();
-            //offset.x = p.x;
-            //offset.y = p.y;
+        	mouseLoc = e.getPoint();
             dragging = true;
         }
         System.out.println("Mouse pressed at "+p.x+", "+p.y);
@@ -150,17 +145,14 @@ class CraneController extends MouseInputAdapter {
  
     public void mouseReleased(MouseEvent e) {
     	
-        System.out.println("Mouse released at "+offset.x+", "+offset.y);
+        System.out.println("Mouse released at " + mouseLoc.x + ", " + mouseLoc.y);
         component.currentPoints = component.updated; // only updated when not dragging.
         dragging = false;
     }
  
     public void mouseDragged(MouseEvent e) {
         if(dragging) {
-//            int x = e.getX() - offset.x;
-//            int y = e.getY() - offset.y;
-            
-        	System.out.println(e.getX()+ ", " + e.getY() + ") (" + offset.x + ", " + offset.y);
+        	System.out.println(e.getX()+ ", " + e.getY() + ") (" + mouseLoc.x + ", " + mouseLoc.y);
 //        	double numerator = e.getX() * offset.x + e.getY() * offset.y;
 //        	double temp = Math.sqrt(Math.abs(e.getX()*e.getX() + offset.x*offset.x));
 //        	double temp2 = Math.sqrt(Math.abs(e.getY()*e.getY() + offset.y*offset.y));
@@ -177,12 +169,12 @@ class CraneController extends MouseInputAdapter {
 //            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
 //            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
 //            
-        	double slope1 = (double)(offset.y-137)/(offset.x-100);
+        	double slope1 = (double)(mouseLoc.y-137)/(mouseLoc.x-100);
             double slope2 = (double)(e.getY()-137)/(e.getX()-100);
             double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
-            System.out.println(slope1 + " " + slope2 + " " + Math.toDegrees(angle));
-
-            component.setAngle(-1*angle);
+            System.out.println("Angle " + Math.toDegrees(angle));
+            
+            component.setAngle(-1*angle); // fix this..
 
         }
     }
