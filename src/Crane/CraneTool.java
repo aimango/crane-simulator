@@ -1,5 +1,8 @@
+/**
+ * Elisa Lou 20372456.
+ * Assignment 2 - Direct Manipulation.
+ */
 package Crane;
-
 
 import java.awt.*;
 import java.awt.event.*;
@@ -7,10 +10,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.util.Arrays;
-
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
- 
+
+//http://stackoverflow.com/questions/4145609/rotate-rectangle-in-java
 //http://www.java-forums.org/awt-swing/19817-java-2d-graphics-drag-drop.html
 public class CraneTool extends JPanel {
      //Rectangle2D rect = new Rectangle(100, 100, 150, 75);
@@ -22,7 +25,10 @@ public class CraneTool extends JPanel {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        
         Graphics2D g2 = (Graphics2D)g;
+        //g2.drawRect(100,100,50,50);
+
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setPaint(Color.blue);
@@ -31,10 +37,12 @@ public class CraneTool extends JPanel {
         rotatePointMatrix(currentPoints, angle);
     	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
         g2.draw(poly);
-        		
+        BaseCrane canvas = new BaseCrane();
+        canvas.paintComponent(g2);
         //g2.translate(x, y);
         //g2.draw(path);
         g2.dispose();
+        
     }
     
     public void setAngle(double angle) {
@@ -110,16 +118,19 @@ public class CraneTool extends JPanel {
     public static void main(String[] args) {
         CraneTool test = new CraneTool();
         new CraneController(test);
-        JFrame f = new JFrame();
+        JFrame f = new JFrame("A02 - Direct Manipulation");
+		
+		//f.setContentPane(canvas);
+		
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.add(test);
-        f.setSize(400,400);
+        f.setSize(800,600);
         f.setLocation(100,100);
         f.setVisible(true);
         initPoints();
 
 
-    }
+	}
 }
  
 class CraneController extends MouseInputAdapter {
