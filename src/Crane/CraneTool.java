@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.Timer;
 
@@ -14,17 +15,12 @@ import javax.swing.event.MouseInputAdapter;
  
 //http://www.java-forums.org/awt-swing/19817-java-2d-graphics-drag-drop.html
 public class CraneTool extends JPanel {
-    Rectangle rect = new Rectangle(100, 100, 150, 75);
+     //Rectangle2D rect = new Rectangle(100, 100, 150, 75);
     static Point currentPoints[] = new Point[4];
-
-//    int xpoints[] = {100, 250, 250, 100, 100, 0 };
-//	int ypoints[] = {100, 100, 175, 175, 100, 0 };
+    static Point updated[] = new Point[4];
     Polygon poly;
     private double angle = 0;
-
-	
-	 Boolean flag = false; 
-    // time loop is set to run at fixed rate of 50 ms
+    boolean flag = false; 
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -33,11 +29,9 @@ public class CraneTool extends JPanel {
                             RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setPaint(Color.blue);
         
-        
-        Point newPoints[] = getOriginalPoints();
         poly = polygonize(currentPoints);
-        rotatePointMatrix(getOriginalPoints(), angle, currentPoints);
-        
+        rotatePointMatrix(currentPoints, angle);
+    	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
         g2.draw(poly);
         		
         //g2.translate(x, y);
@@ -48,7 +42,6 @@ public class CraneTool extends JPanel {
     public void setAngle(double angle) {
         this.angle = angle;
         repaint();
-
     }
 
 	protected static void initPoints(){
@@ -56,42 +49,36 @@ public class CraneTool extends JPanel {
 	    currentPoints[1]= new Point(250, 100);
 	    currentPoints[2]= new Point(250, 175);
 	    currentPoints[3]= new Point(100, 175);
-		
 	}
+
     protected Point[] getOriginalPoints(){
         return currentPoints;
     }
-
-    protected void setOriginalPoints(Point p[]) {
-    	for (int i = 0; i < 4; i++) {
-    		currentPoints[i] = p[i];
-    	}
-    }
+//
+//    protected void setOriginalPoints(Point p[]) {
+//    	for (int i = 0; i < 4; i++) {
+//    		currentPoints[i] = p[i];
+//    	}
+//    }
     
-    public void rotatePointMatrix(Point[] origPoints, double angle, Point[] storeTo){
+    public void rotatePointMatrix(Point[] origPoints, double angle){
 
-        /* We ge the original points of the polygon we wish to rotate
-         *  and rotate them with affine transform to the given angle. 
-         *  After the opeariont is complete the points are stored to the 
-         *  array given to the method.
-        */
-    	if (!flag) {
+    	if (false) {
 	        AffineTransform.getRotateInstance(angle, 100, 137)
-	                .transform(origPoints,0,storeTo,0,4);
+	                .transform(origPoints,0,currentPoints,0,4);
 	        flag = true;
     	}
     	else {
 			AffineTransform at = new AffineTransform();
-			at.rotate(angle, 100, 137); // doesnt get painted... need to use poly completely .
+			at.rotate(angle, 100, 137);
 			PathIterator pi = poly.getPathIterator(at);
 			
 			Path2D path = new Path2D.Float();
 			path.append(pi, true);
 			
-			
-			PathIterator i = poly.getPathIterator(at);
+			PathIterator i = poly.getPathIterator(at); // i actually need to declare a new 1.
 			poly = new Polygon(); 
-			Point updated[] = new Point[4];
+
 			int k = 0;
 			while (!i.isDone()) {
 			    double[] xy = new double[2];
@@ -99,18 +86,18 @@ public class CraneTool extends JPanel {
 			    if (xy[0] != 0 && xy[1] != 0) {
 			    	poly.addPoint((int) xy[0], (int) xy[1]);
 			    	updated[k] = new Point((int)xy[0], (int)xy[1]);
+			    	k++;
 			    }
-			    System.out.print(Arrays.toString(xy));
+			    System.out.println(Arrays.toString(xy));
+			    System.out.println("SHOULDBESAME"+Arrays.toString(updated));
 			    i.next();
 			}
+			
 			//System.out.print(poly.xpoints[0] + " " + poly.ypoints[0]);
-			//rect.x = poly.xpoints[0];
-			//rect.y = poly.ypoints[0];
     	}
     }
 
     public Polygon polygonize(Point[] polyPoints){
-
         //a simple method that makes a new polygon out of the rotated points
         Polygon tempPoly = new Polygon();
 
@@ -164,6 +151,7 @@ class CraneController extends MouseInputAdapter {
     public void mouseReleased(MouseEvent e) {
     	
         System.out.println("Mouse released at "+offset.x+", "+offset.y);
+        component.currentPoints = component.updated; // only updated when not dragging.
         dragging = false;
     }
  
@@ -189,8 +177,8 @@ class CraneController extends MouseInputAdapter {
 //            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
 //            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
 //            
-        	double slope1 = (double)(offset.y-100)/(offset.x-100);
-            double slope2 = (double)(e.getY()-100)/(e.getX()-100);
+        	double slope1 = (double)(offset.y-137)/(offset.x-100);
+            double slope2 = (double)(e.getY()-137)/(e.getX()-100);
             double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
             System.out.println(slope1 + " " + slope2 + " " + Math.toDegrees(angle));
 
