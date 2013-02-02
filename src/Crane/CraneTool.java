@@ -22,6 +22,8 @@ public class CraneTool extends JPanel {
     Polygon poly;
     private double angle = 0;
     boolean flag = false; 
+	static int startX = 50;
+	static int startY = 210;
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -42,7 +44,6 @@ public class CraneTool extends JPanel {
         g2.setPaint(Color.CYAN);
         g2.fillPolygon(poly);
         
-        
         BaseCrane canvas = new BaseCrane();
         canvas.paintComponent(g2);
         //g2.translate(x, y);
@@ -57,10 +58,11 @@ public class CraneTool extends JPanel {
     }
 
 	protected static void initPoints(){
-	    currentPoints[0]= new Point(100, 100);
-	    currentPoints[1]= new Point(250, 100);
-	    currentPoints[2]= new Point(250, 130);
-	    currentPoints[3]= new Point(100, 130);
+
+	    currentPoints[0]= new Point(startX+100, startY+100);
+	    currentPoints[1]= new Point(startX+250, startY+100);
+	    currentPoints[2]= new Point(startX+250, startY+130);
+	    currentPoints[3]= new Point(startX+100, startY+130);
 	}
 
     protected Point[] getOriginalPoints(){
@@ -76,13 +78,13 @@ public class CraneTool extends JPanel {
     public void rotatePointMatrix(Point[] origPoints, double angle){
 
     	if (false) {
-	        AffineTransform.getRotateInstance(angle, 100, 115)
+	        AffineTransform.getRotateInstance(angle, startX+100, startY+115)
 	                .transform(origPoints,0,currentPoints,0,4);
 	        flag = true;
     	}
     	else {
 			AffineTransform at = new AffineTransform();
-			at.rotate(angle, 100, 115);
+			at.rotate(angle, startX+100, startY+115);
 			PathIterator pi = poly.getPathIterator(at);
 			
 			Path2D path = new Path2D.Float();
@@ -182,8 +184,8 @@ class CraneController extends MouseInputAdapter {
 //            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
 //            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
 //            
-        	double slope1 = (double)(mouseLoc.y-115)/(mouseLoc.x-100);
-            double slope2 = (double)(e.getY()-115)/(e.getX()-100);
+        	double slope1 = (double)(mouseLoc.y-component.startY-115)/(mouseLoc.x-component.startX-100);
+            double slope2 = (double)(e.getY()-component.startY-115)/(e.getX()-component.startX-100);
             double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
             System.out.println("Angle " + Math.toDegrees(angle));
             
