@@ -36,7 +36,13 @@ public class CraneTool extends JPanel {
         poly = polygonize(currentPoints);
         rotatePointMatrix(currentPoints, angle);
     	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
+
+		g2.setStroke(new BasicStroke(5));
         g2.draw(poly);
+        g2.setPaint(Color.CYAN);
+        g2.fillPolygon(poly);
+        
+        
         BaseCrane canvas = new BaseCrane();
         canvas.paintComponent(g2);
         //g2.translate(x, y);
@@ -53,8 +59,8 @@ public class CraneTool extends JPanel {
 	protected static void initPoints(){
 	    currentPoints[0]= new Point(100, 100);
 	    currentPoints[1]= new Point(250, 100);
-	    currentPoints[2]= new Point(250, 175);
-	    currentPoints[3]= new Point(100, 175);
+	    currentPoints[2]= new Point(250, 130);
+	    currentPoints[3]= new Point(100, 130);
 	}
 
     protected Point[] getOriginalPoints(){
@@ -70,13 +76,13 @@ public class CraneTool extends JPanel {
     public void rotatePointMatrix(Point[] origPoints, double angle){
 
     	if (false) {
-	        AffineTransform.getRotateInstance(angle, 100, 137)
+	        AffineTransform.getRotateInstance(angle, 100, 115)
 	                .transform(origPoints,0,currentPoints,0,4);
 	        flag = true;
     	}
     	else {
 			AffineTransform at = new AffineTransform();
-			at.rotate(angle, 100, 137);
+			at.rotate(angle, 100, 115);
 			PathIterator pi = poly.getPathIterator(at);
 			
 			Path2D path = new Path2D.Float();
@@ -119,17 +125,13 @@ public class CraneTool extends JPanel {
         CraneTool test = new CraneTool();
         new CraneController(test);
         JFrame f = new JFrame("A02 - Direct Manipulation");
-		
-		//f.setContentPane(canvas);
-		
+
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.add(test);
         f.setSize(800,600);
         f.setLocation(100,100);
         f.setVisible(true);
         initPoints();
-
-
 	}
 }
  
@@ -180,8 +182,8 @@ class CraneController extends MouseInputAdapter {
 //            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
 //            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
 //            
-        	double slope1 = (double)(mouseLoc.y-137)/(mouseLoc.x-100);
-            double slope2 = (double)(e.getY()-137)/(e.getX()-100);
+        	double slope1 = (double)(mouseLoc.y-115)/(mouseLoc.x-100);
+            double slope2 = (double)(e.getY()-115)/(e.getX()-100);
             double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
             System.out.println("Angle " + Math.toDegrees(angle));
             
