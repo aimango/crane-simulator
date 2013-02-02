@@ -20,7 +20,7 @@ public class CraneTool extends JPanel {
     static Point currentPoints[] = new Point[4];
     static Point updated[] = new Point[4];
     static Polygon poly;
-    private double angle = 0;
+    private double angle = 150;
     boolean flag = false; 
 	static int startX = 50;
 	static int startY = 210;
@@ -37,7 +37,7 @@ public class CraneTool extends JPanel {
         
         
         rotatePointMatrix(currentPoints, angle);
-    	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
+    	//System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
 
 		g2.setStroke(new BasicStroke(5));
 
@@ -111,11 +111,11 @@ public class CraneTool extends JPanel {
 			    	updated[k] = new Point(round(xy[0]), round(xy[1]));
 			    	k++;
 			    }
-			    System.out.println(Arrays.toString(xy));
-			    System.out.println("SHOULDBESAME"+Arrays.toString(updated));
+			    //System.out.println(Arrays.toString(xy));
+			    //System.out.println("SHOULDBESAME"+Arrays.toString(updated));
 			    i.next();
 			}
-			if (polyNew.intersects(50, 350, 200, 50)){
+			if (polyNew.intersects(50, 350, 200, 50) || polyNew.intersects(50,150,80,300)){
 				
 			}
 			else 
@@ -178,16 +178,23 @@ class CraneController extends MouseInputAdapter {
  
     public void mouseDragged(MouseEvent e) {
         if(dragging) {
+        	double originX = component.startX+100;
+        	double originY = component.startY+115;
+        	double vectorA[] = {e.getX()-originX, e.getY()-originY};
+        	double vectorB[] = {mouseLoc.x-originX, mouseLoc.y-originY};
         	
         	System.out.println(e.getX()+ ", " + e.getY() + ") (" + mouseLoc.x + ", " + mouseLoc.y);
-//        	double numerator = e.getX() * offset.x + e.getY() * offset.y;
-//        	double temp = Math.sqrt(Math.abs(e.getX()*e.getX() + offset.x*offset.x));
-//        	double temp2 = Math.sqrt(Math.abs(e.getY()*e.getY() + offset.y*offset.y));
-//        	double denominator = temp * temp2;
-//            double angle = Math.acos(numerator/denominator); // this is in radians
-//            System.out.println(temp + " " + temp2);
-//            System.out.println(numerator+" "+denominator+ " " + Math.toDegrees(angle));
-//            cos-1((P122 + P132 - P232)/(2 * P12 * P13))
+        	double numerator = vectorA[0]*vectorB[0] + vectorA[1]*vectorB[1];
+        	double temp = Math.sqrt(Math.abs(vectorA[0]*vectorA[0] + vectorA[1]*vectorA[1]));
+        	double temp2 = Math.sqrt(Math.abs(vectorB[0]*vectorB[0] + vectorB[1]*vectorB[1]));
+        	double denominator = temp * temp2;
+            double angle = Math.acos(numerator/denominator); // this is in ?
+            boolean negative = mouseLoc.y-e.getY() < 0;
+            
+            System.out.println(Arrays.toString(vectorA) + " " + Arrays.toString(vectorB));
+            System.out.println("Temps "+temp + " " + temp2);
+            System.out.println(numerator+" "+denominator+ " ANGLE " + Math.toDegrees(angle));
+            //cos-1((P122 + P132 - P232)/(2 * P12 * P13))
         	//sqrt((P1x - P2x)2 + (P1y - P2y)2)
         	
 //        	double p12 = Math.sqrt((100-offset.x)*(100-offset.x) + (100-offset.y)*(100-offset.y));
@@ -196,13 +203,16 @@ class CraneController extends MouseInputAdapter {
 //            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
 //            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
 //            
-        	double slope1 = (double)(mouseLoc.y-component.startY-115)/(mouseLoc.x-component.startX-100);
-            double slope2 = (double)(e.getY()-component.startY-115)/(e.getX()-component.startX-100);
-            double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
-            System.out.println("Angle " + Math.toDegrees(angle));
-            
-            component.setAngle(-1*angle); // fix this..
-
+//        	double slope1 = (double)(mouseLoc.y-component.startY-115)/(mouseLoc.x-component.startX-100);
+//            double slope2 = (double)(e.getY()-component.startY-115)/(e.getX()-component.startX-100);
+//            double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
+//            System.out.println("Angle " + Math.toDegrees(angle));
+//            
+            if (negative){
+            	component.setAngle(angle/2);
+            } else{
+            	component.setAngle(-1*angle/2); // fix this..
+            }
         }
     }
 }
