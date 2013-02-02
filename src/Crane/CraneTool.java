@@ -19,7 +19,7 @@ public class CraneTool extends JPanel {
      //Rectangle2D rect = new Rectangle(100, 100, 150, 75);
     static Point currentPoints[] = new Point[4];
     static Point updated[] = new Point[4];
-    Polygon poly;
+    static Polygon poly;
     private double angle = 0;
     boolean flag = false; 
 	static int startX = 50;
@@ -35,15 +35,12 @@ public class CraneTool extends JPanel {
                             RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setPaint(Color.blue);
         
-        poly = polygonize(currentPoints);
+        
         rotatePointMatrix(currentPoints, angle);
     	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
 
 		g2.setStroke(new BasicStroke(5));
-		if (poly.intersects(50, 350, 200, 50)){
-			
-		}
-		else 
+
 			g2.draw(poly);
         g2.setPaint(Color.CYAN);
         g2.fillPolygon(poly);
@@ -76,6 +73,16 @@ public class CraneTool extends JPanel {
 //    		currentPoints[i] = p[i];
 //    	}
 //    }
+    private int round(double d){
+        double dAbs = Math.abs(d);
+        int i = (int) dAbs;
+        double result = dAbs - (double) i;
+        if(result<0.5){
+            return d<0 ? -i : i;            
+        }else{
+            return d<0 ? -(i+1) : i+1;          
+        }
+    }
     
     public void rotatePointMatrix(Point[] origPoints, double angle){
 
@@ -92,7 +99,7 @@ public class CraneTool extends JPanel {
 			Path2D path = new Path2D.Float();
 			path.append(pi, true);
 			
-			PathIterator i = poly.getPathIterator(at); // i actually need to declare a new 1.
+			PathIterator i = poly.getPathIterator(at); // I actually need to declare a new iterator.
 			Polygon polyNew = new Polygon(); 
 
 			int k = 0;
@@ -100,30 +107,31 @@ public class CraneTool extends JPanel {
 			    double[] xy = new double[2];
 			    i.currentSegment(xy);
 			    if (xy[0] != 0 && xy[1] != 0) {
-			    	polyNew.addPoint((int) xy[0], (int) xy[1]);
-			    	updated[k] = new Point((int)xy[0], (int)xy[1]);
+			    	polyNew.addPoint( round(xy[0]), round(xy[1]));
+			    	updated[k] = new Point(round(xy[0]), round(xy[1]));
 			    	k++;
 			    }
 			    System.out.println(Arrays.toString(xy));
 			    System.out.println("SHOULDBESAME"+Arrays.toString(updated));
 			    i.next();
 			}
-			poly = polyNew;
+			if (polyNew.intersects(50, 350, 200, 50)){
+				
+			}
+			else 
+				poly = polyNew;
 			//currentPoints=updated;
 			//System.out.print(poly.xpoints[0] + " " + poly.ypoints[0]);
     	}
     }
 
-    public Polygon polygonize(Point[] polyPoints){
+    public static Polygon polygonize(Point[] polyPoints){
         //a simple method that makes a new polygon out of the rotated points
         Polygon tempPoly = new Polygon();
-
-         for(int  i=0; i < polyPoints.length; i++){
+        for (int i = 0; i < polyPoints.length; i++){
              tempPoly.addPoint(polyPoints[i].x, polyPoints[i].y);
         }
-
         return tempPoly;
-
     }
     
     public static void main(String[] args) {
@@ -137,6 +145,7 @@ public class CraneTool extends JPanel {
         f.setLocation(100,100);
         f.setVisible(true);
         initPoints();
+        poly = polygonize(currentPoints);
 	}
 }
  
