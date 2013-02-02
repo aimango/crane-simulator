@@ -40,7 +40,11 @@ public class CraneTool extends JPanel {
     	System.out.print("\nTRALALA" + Arrays.toString(currentPoints));
 
 		g2.setStroke(new BasicStroke(5));
-        g2.draw(poly);
+		if (poly.intersects(50, 350, 200, 50)){
+			
+		}
+		else 
+			g2.draw(poly);
         g2.setPaint(Color.CYAN);
         g2.fillPolygon(poly);
         
@@ -48,8 +52,7 @@ public class CraneTool extends JPanel {
         canvas.paintComponent(g2);
         //g2.translate(x, y);
         //g2.draw(path);
-        g2.dispose();
-        
+        g2.dispose();   
     }
     
     public void setAngle(double angle) {
@@ -58,7 +61,6 @@ public class CraneTool extends JPanel {
     }
 
 	protected static void initPoints(){
-
 	    currentPoints[0]= new Point(startX+100, startY+100);
 	    currentPoints[1]= new Point(startX+250, startY+100);
 	    currentPoints[2]= new Point(startX+250, startY+130);
@@ -91,14 +93,14 @@ public class CraneTool extends JPanel {
 			path.append(pi, true);
 			
 			PathIterator i = poly.getPathIterator(at); // i actually need to declare a new 1.
-			poly = new Polygon(); 
+			Polygon polyNew = new Polygon(); 
 
 			int k = 0;
 			while (!i.isDone()) {
 			    double[] xy = new double[2];
 			    i.currentSegment(xy);
 			    if (xy[0] != 0 && xy[1] != 0) {
-			    	poly.addPoint((int) xy[0], (int) xy[1]);
+			    	polyNew.addPoint((int) xy[0], (int) xy[1]);
 			    	updated[k] = new Point((int)xy[0], (int)xy[1]);
 			    	k++;
 			    }
@@ -106,7 +108,8 @@ public class CraneTool extends JPanel {
 			    System.out.println("SHOULDBESAME"+Arrays.toString(updated));
 			    i.next();
 			}
-			
+			poly = polyNew;
+			//currentPoints=updated;
 			//System.out.print(poly.xpoints[0] + " " + poly.ypoints[0]);
     	}
     }
@@ -159,14 +162,14 @@ class CraneController extends MouseInputAdapter {
     }
  
     public void mouseReleased(MouseEvent e) {
-    	
         System.out.println("Mouse released at " + mouseLoc.x + ", " + mouseLoc.y);
-        component.currentPoints = component.updated; // only updated when not dragging.
+        //component.currentPoints = component.updated; // only updated when not dragging.
         dragging = false;
     }
  
     public void mouseDragged(MouseEvent e) {
         if(dragging) {
+        	
         	System.out.println(e.getX()+ ", " + e.getY() + ") (" + mouseLoc.x + ", " + mouseLoc.y);
 //        	double numerator = e.getX() * offset.x + e.getY() * offset.y;
 //        	double temp = Math.sqrt(Math.abs(e.getX()*e.getX() + offset.x*offset.x));
