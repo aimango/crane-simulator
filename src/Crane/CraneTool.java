@@ -13,8 +13,10 @@ import javax.swing.event.MouseInputAdapter;
 //http://www.java-forums.org/awt-swing/19817-java-2d-graphics-drag-drop.html
 public class CraneTool extends JPanel {
     Rectangle rect = new Rectangle(100, 100, 150, 75);
-    Polygon poly;
-    Point lastSaved;
+
+    int xpoints[] = {100, 250, 250, 100, 100, 0 };
+	int ypoints[] = {100, 100, 175, 175, 100, 0 };
+    Polygon poly = new Polygon(xpoints, ypoints, xpoints.length);
     private double angle = 0;
 
     protected void paintComponent(Graphics g) {
@@ -25,9 +27,8 @@ public class CraneTool extends JPanel {
         g2.setPaint(Color.blue);
         //g2.draw(rect);
         
-       // if (angle != 0) {
         AffineTransform at = new AffineTransform();
-        at.rotate(angle, rect.x, rect.y + 37);
+        at.rotate(angle, rect.x, rect.y + 37); // doesnt get painted... need to use poly completely .
         PathIterator pi = rect.getPathIterator(at);
         Path2D path = new Path2D.Float();
         path.append(pi, true);
@@ -38,24 +39,18 @@ public class CraneTool extends JPanel {
             double[] xy = new double[2];
             i.currentSegment(xy);
             poly.addPoint((int) xy[0], (int) xy[1]);
-            System.out.println(Arrays.toString(xy));
-
+            System.out.print(Arrays.toString(xy));
             i.next();
         }
+        //System.out.print(poly.xpoints[0] + " " + poly.ypoints[0]);
+//        rect.x = poly.xpoints[0];
+//        rect.y = poly.ypoints[0];
 
-
-//        int width = getWidth() - 1;
-//        int height = getHeight() - 1;
-//
-//        int x = (width - rect.width) / 2;
-//        int y = (height - rect.height) / 2;
-        
         //g2.translate(x, y);
         g2.draw(path);
         g2.dispose();
-        //}
     }
- 
+    
     public void setRect(double angle) {
         this.angle = angle;
         repaint();
@@ -87,7 +82,7 @@ class CraneController extends MouseInputAdapter {
     public void mousePressed(MouseEvent e) {
         Point p = e.getPoint();
         Polygon poly = component.poly;
-        Rectangle r = component.rect;
+       // Rectangle r = component.rect;
         if(poly.contains(p)) {
         	offset = e.getPoint();
             //offset.x = p.x;
