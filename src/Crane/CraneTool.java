@@ -9,22 +9,28 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
-import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
 //http://stackoverflow.com/questions/4145609/rotate-rectangle-in-java
 //http://www.java-forums.org/awt-swing/19817-java-2d-graphics-drag-drop.html
 public class CraneTool extends JPanel {
-     //Rectangle2D rect = new Rectangle(100, 100, 150, 75);
+	// get rid of warning
+	private static final long serialVersionUID = 1L;
+	
+	//Rectangle2D rect = new Rectangle(100, 100, 150, 75);
     static Point currentPoints[] = new Point[4];
     static Point updated[] = new Point[4];
     static Polygon poly;
-    private double angle = 150;
+    private double angle = 30;
     boolean flag = false; 
-	static int startX = 50;
-	static int startY = 210;
+	static int startX ;
+	static int startY ;
 
+	public CraneTool(int startX, int startY) {
+		this.startX = startX;
+		this.startY = startY;
+	}
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
@@ -84,7 +90,7 @@ public class CraneTool extends JPanel {
         }
     }
     
-    public void rotatePointMatrix(Point[] origPoints, double angle){
+    protected void rotatePointMatrix(Point[] origPoints, double angle){
 
     	if (false) {
 	        AffineTransform.getRotateInstance(angle, startX+100, startY+115)
@@ -115,18 +121,17 @@ public class CraneTool extends JPanel {
 			    //System.out.println("SHOULDBESAME"+Arrays.toString(updated));
 			    i.next();
 			}
-			if (polyNew.intersects(50, 350, 200, 50) || polyNew.intersects(50,150,80,300)){
-				
-			}
-			else 
+//			if (polyNew.intersects(50, 350, 200, 50) || polyNew.intersects(50,150,80,300)){
+//				
+//			}
+//			else 
 				poly = polyNew;
 			//currentPoints=updated;
 			//System.out.print(poly.xpoints[0] + " " + poly.ypoints[0]);
     	}
     }
 
-    public static Polygon polygonize(Point[] polyPoints){
-        //a simple method that makes a new polygon out of the rotated points
+    private static Polygon polygonize(Point[] polyPoints){
         Polygon tempPoly = new Polygon();
         for (int i = 0; i < polyPoints.length; i++){
              tempPoly.addPoint(polyPoints[i].x, polyPoints[i].y);
@@ -135,12 +140,16 @@ public class CraneTool extends JPanel {
     }
     
     public static void main(String[] args) {
-        CraneTool test = new CraneTool();
-        new CraneController(test);
+        CraneTool test1 = new CraneTool(50,210);
+        new CraneController(test1);
+        
+        CraneTool test2 = new CraneTool(100,210);
+        new CraneController(test2);
         JFrame f = new JFrame("A02 - Direct Manipulation");
 
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.add(test);
+        f.add(test1);
+        f.add(test2);
         f.setSize(800,600);
         f.setLocation(100,100);
         f.setVisible(true);
@@ -151,9 +160,12 @@ public class CraneTool extends JPanel {
  
 class CraneController extends MouseInputAdapter {
     CraneTool component;
-    Point mouseLoc = new Point();
+    Point currLoc = new Point();
+    Point startLoc = new Point();
     boolean dragging = false;
- 
+    
+    double startAngle = 0, currentAngle = 0;
+
     public CraneController(CraneTool tool) {
         component = tool;
         component.addMouseListener(this);
@@ -164,55 +176,80 @@ class CraneController extends MouseInputAdapter {
         Point p = e.getPoint();
         Polygon poly = component.poly;
         if(poly.contains(p)) {
-        	mouseLoc = e.getPoint();
+        	startLoc = e.getPoint();
             dragging = true;
         }
         System.out.println("Mouse pressed at "+p.x+", "+p.y);
     }
  
     public void mouseReleased(MouseEvent e) {
-        System.out.println("Mouse released at " + mouseLoc.x + ", " + mouseLoc.y);
+        System.out.println("Mouse released at " + e.getPoint().x + ", " + e.getPoint().y);
         //component.currentPoints = component.updated; // only updated when not dragging.
         dragging = false;
     }
  
+    //http://stackoverflow.com/questions/2198303/java-2d-drag-mouse-to-rotate-image-smoothly/2198368#2198368
+    public double getAngle(Point origin, Point other){ 
+    	double dy = other.y - origin.y;
+    	double dx = other.x - origin.x;
+    	double angle = 0;
+    	double PI = Math.PI;
+    	if (dx == 0) {// edge case
+    		angle = dy>=0 ? PI/2 : -PI/2;
+    	} else {
+    		angle = Math.atan(dy/dx);
+    		if (dx < 0) { // put it in the right place
+    			angle += PI;
+    		}
+    	}
+    	if (angle < 0)
+    		angle += 2*PI;
+    	return angle;
+    }
+
+//    	double vectorA[] = {e.getX()-originX, e.getY()-originY};
+//    	double vectorB[] = {mouseLoc.x-originX, mouseLoc.y-originY};
+//    	
+//    	System.out.println(e.getX()+ ", " + e.getY() + ") (" + mouseLoc.x + ", " + mouseLoc.y);
+//    	double numerator = vectorA[0]*vectorB[0] + vectorA[1]*vectorB[1];
+//    	double temp = Math.sqrt(Math.abs(vectorA[0]*vectorA[0] + vectorA[1]*vectorA[1]));
+//    	double temp2 = Math.sqrt(Math.abs(vectorB[0]*vectorB[0] + vectorB[1]*vectorB[1]));
+//    	double denominator = temp * temp2;
+//        double angle = Math.acos(numerator/denominator); // this is in ?
+//        boolean negative = mouseLoc.y-e.getY() < 0;
+//        
+//        System.out.println(Arrays.toString(vectorA) + " " + Arrays.toString(vectorB));
+//        System.out.println("Temps "+temp + " " + temp2);
+//        System.out.println(numerator+" "+denominator+ " ANGLE " + Math.toDegrees(angle));
+//        
+        //cos-1((P122 + P132 - P232)/(2 * P12 * P13))
+    	//sqrt((P1x - P2x)2 + (P1y - P2y)2)
+    	
+//    	double p12 = Math.sqrt((originX-mouseLoc.x)*(originX-mouseLoc.x) + (originY-mouseLoc.y)*(originY-mouseLoc.y));
+//    	double p13 = Math.sqrt((originX-e.getX())*(originX-e.getX()) + (originY-e.getY())*(originY-e.getY()));
+//    	double p23 = Math.sqrt((e.getX()-mouseLoc.x)*(e.getX()-mouseLoc.x) + (e.getY()-mouseLoc.y)*(e.getY()-mouseLoc.y));
+//        double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
+//        System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
+        
+//    	double slope1 = (double)(mouseLoc.y-component.startY-originY)/(mouseLoc.x-component.startX-originX);
+//        double slope2 = (double)(e.getY()-component.startY-originY)/(e.getX()-component.startX-originX);
+//        double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
+//        System.out.println("Angle " + Math.toDegrees(angle));
+
+    
     public void mouseDragged(MouseEvent e) {
-        if(dragging) {
-        	double originX = component.startX+100;
-        	double originY = component.startY+115;
-        	double vectorA[] = {e.getX()-originX, e.getY()-originY};
-        	double vectorB[] = {mouseLoc.x-originX, mouseLoc.y-originY};
+    	currLoc = e.getPoint();
+        if(dragging && currLoc != startLoc) {
+        	int originX = component.startX+100;
+        	int originY = component.startY+115;
+        	Point origin = new Point(originX, originY);
         	
-        	System.out.println(e.getX()+ ", " + e.getY() + ") (" + mouseLoc.x + ", " + mouseLoc.y);
-        	double numerator = vectorA[0]*vectorB[0] + vectorA[1]*vectorB[1];
-        	double temp = Math.sqrt(Math.abs(vectorA[0]*vectorA[0] + vectorA[1]*vectorA[1]));
-        	double temp2 = Math.sqrt(Math.abs(vectorB[0]*vectorB[0] + vectorB[1]*vectorB[1]));
-        	double denominator = temp * temp2;
-            double angle = Math.acos(numerator/denominator); // this is in ?
-            boolean negative = mouseLoc.y-e.getY() < 0;
-            
-            System.out.println(Arrays.toString(vectorA) + " " + Arrays.toString(vectorB));
-            System.out.println("Temps "+temp + " " + temp2);
-            System.out.println(numerator+" "+denominator+ " ANGLE " + Math.toDegrees(angle));
-            //cos-1((P122 + P132 - P232)/(2 * P12 * P13))
-        	//sqrt((P1x - P2x)2 + (P1y - P2y)2)
         	
-//        	double p12 = Math.sqrt((100-offset.x)*(100-offset.x) + (100-offset.y)*(100-offset.y));
-//        	double p13 = Math.sqrt((100-e.getX())*(100-e.getX()) + (100-e.getY())*(100-e.getY()));
-//        	double p23 = Math.sqrt((e.getX()-offset.x)*(e.getX()-offset.x) + (e.getY()-offset.y)*(e.getY()-offset.y));
-//            double angle = Math.acos((p12*p12 + p13*p13 - p23*p23)/(2*p12*p13));
-//            System.out.println(p12 + " "+ p13 + " " + p23 + " " + Math.toDegrees(angle));
-//            
-//        	double slope1 = (double)(mouseLoc.y-component.startY-115)/(mouseLoc.x-component.startX-100);
-//            double slope2 = (double)(e.getY()-component.startY-115)/(e.getX()-component.startX-100);
-//            double angle = Math.atan((slope1 - slope2) / (1 + (slope1 * slope2)));
-//            System.out.println("Angle " + Math.toDegrees(angle));
-//            
-            if (negative){
-            	component.setAngle(angle/2);
-            } else{
-            	component.setAngle(-1*angle/2); // fix this..
-            }
+        	double startAngle = getAngle(origin, startLoc);
+        	double currAngle = getAngle(origin, currLoc);
+        	System.out.println("THE START ANGLE IS " + Math.toDegrees(startAngle));
+        	System.out.print("THE CURR ANGLE IS " + Math.toDegrees(currAngle));
+        	component.setAngle(currAngle - startAngle);
         }
     }
 }
