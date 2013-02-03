@@ -33,8 +33,11 @@ public class Game extends JPanel {
 		t.start();
 		
 		//for (int i = 0; i < 5; i++)
-			drawables.add(new Drawable(100,100));
-			drawables.add(new Drawable(300,100));
+
+		Drawable kevin = new Drawable(100, 100, 0, null, Color.cyan);
+		Drawable bob = new Drawable(50,-80, Math.toRadians(0), kevin, Color.blue);
+		drawables.add(kevin);
+		drawables.add(bob);
 	}
 	
 	public static void main(String[] args) {
@@ -44,11 +47,10 @@ public class Game extends JPanel {
 		f.setSize(800, 600);
 		f.setContentPane(canvas);
 		f.setVisible(true);
-		
-		
 	}
 	
 	public void paintComponent(Graphics g) {
+		
 		for (int i = 0; i < drawables.size(); i++){
 			drawables.get(i).paintComponent(g);
 		}
