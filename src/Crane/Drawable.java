@@ -5,9 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -35,12 +32,12 @@ public class Drawable extends JComponent {
 		ai.translate(x, y);
 		ai.rotate(angle);
 		this.fillColor = fill;
-		rect = new Rectangle(0,0,50,100);
+		rect = new Rectangle(-25,-25,50,100);
 	}
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setPaint(fillColor);
+		g2.setColor(fillColor);
 		
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		g2.transform(getTransform()); // offset
@@ -60,7 +57,7 @@ public class Drawable extends JComponent {
 		return aiParent;
 	}
 	
-	public boolean isInside(Point p){
+	Point2D getPointInverse(Point p){
 		AffineTransform temp = new AffineTransform(getTransform()); // copy cxr
 		try {
 			temp = temp.createInverse();
@@ -71,17 +68,27 @@ public class Drawable extends JComponent {
 		
 		Point2D d = new Point2D.Double();
 		temp.transform(p, d);
+		return d;
+	}
+	public boolean isInside(Point p){
+		Point2D d = getPointInverse(p);
 		
-		//inverseTransform(ptSrc, ptDst)
-		if (d.getX() > 0 && d.getX() < 50 && d.getY() > 0 && d.getY() < 100 ){
+		if (d.getX() > -25 && d.getX() < 25 && d.getY() > -25 && d.getY() < 75 ){
 			System.out.print("yay");
 			return true;
 		}
 		else{
 			System.out.print("nay");
 			return false;
-	
 		}
 
+	}
+	public void moveArm(Point p) {
+		Point2D d = getPointInverse(p);
+		double angle = Math.atan2(d.getY(), d.getX());
+		System.out.println("The angle before is "+ this.angle);
+		//this.angle += angle;
+		System.out.println("The angle after is "+ this.angle);
+		ai.rotate(angle);
 	}
 }

@@ -21,8 +21,9 @@ public class Game extends JPanel {
 	ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	private Timer t;
 	private int fps = 40;
-	boolean dragging = false;
+	private boolean dragging = false;
 	Point old, current;
+	int clickedIndex;
 	
 	public Game(){
 		super();
@@ -51,10 +52,11 @@ public class Game extends JPanel {
 //			        if(d.rect.contains(p)) {
 //			        	old = p;
 //			        }
-		        for (int i = 0; i < drawables.size(); i++) {
+		        for (int i = drawables.size() - 1; i >= 0; i--) {
 		        	if (drawables.get(i).isInside(p) ) {
 		        		dragging = true;
 		        		System.out.println(i);
+		        		clickedIndex = i;
 		        		break;
 		        	}
 		        }
@@ -71,16 +73,17 @@ public class Game extends JPanel {
 				if (dragging) {
 					System.out.println("Drag");
 					current = e.getPoint();
+					drawables.get(clickedIndex).moveArm(current);
+					//toMove.paintComponent(g);
 	//					if (graphics2D != null)
 	//						graphics2D.drawLine(oldX, oldY, currentX, currentY);
-					repaint();
-					old = current;
+					//repaint();
+					//old = current;
 	//					oldX = currentX;
 	//					oldY = currentY;
 				}
 			}
 		});
-
 	}
 	
 	public static void main(String[] args) {
@@ -89,36 +92,15 @@ public class Game extends JPanel {
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setSize(800, 600);
 		f.setContentPane(canvas);
+		f.setResizable(false);
 		f.setVisible(true);
 	}
 	
 	public void paintComponent(Graphics g) {
-		
+		g.clearRect(0,0,800,600); // lol
 		for (int i = 0; i < drawables.size(); i++){
 			final Drawable d = drawables.get(i);
 			d.paintComponent(g);
-			
-			d.addMouseListener(new MouseAdapter() {
-				public void mousePressed(MouseEvent e) {				
-			        Point p = e.getPoint();
-			        if(d.rect.contains(p)) {
-			        	old = p;
-			        }
-			        System.out.println("Mouse pressed at " + p.x +", " + p.y);
-			        
-				}
-			});
-			d.addMouseMotionListener(new MouseMotionAdapter() {
-				public void mouseDragged(MouseEvent e) {
-					current = e.getPoint();
-//					if (graphics2D != null)
-//						graphics2D.drawLine(oldX, oldY, currentX, currentY);
-					repaint();
-					old = current;
-//					oldX = currentX;
-//					oldY = currentY;
-				}
-			});
 		}
 	}
 	
