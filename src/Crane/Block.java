@@ -8,35 +8,31 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-public class CraneArm extends Drawable {
+
+public class Block extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
-	
-	public CraneArm(int x, int y, double angle, Drawable parent, Color fill){
+	public Block(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
-		rect = new Rectangle(-25,-25,50,150);
+		//randomly generate a height and width : O and x,y.....
+		rect = new Rectangle(-25, -25, 30, 80);
 	}
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.setColor(fillColor);
 		
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		g2.transform(getTransform()); // offset
 		g2.fill(rect);
-		
-		g2.setStroke(new BasicStroke(2));
-		g2.setColor(Color.black);
-		g2.draw(rect);
-		g2.fillOval(-8, -20, 16, 16);
 		g2.setTransform(aiCurr); // set to
+		
 	}
-	
+
 	protected boolean isInside(Point2D p){
-		p = getPointInverse(p);
-		if (p.getX() > -25 && p.getX() < 25 && p.getY() > -25 && p.getY() < 125 ){ // bounds check
-			System.out.print("yay");
+		Point2D d = p;
+		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40){ // bounds check
+			//xBegin = d.getX();
 			return true;
 		}
 		else{
@@ -45,9 +41,10 @@ public class CraneArm extends Drawable {
 	}
 
 	protected void moveItem(Point2D p) {
-		Point2D d = getPointInverse(p);
-		double angle = Math.atan2(d.getY(), d.getX());
-		at.rotate(angle-Math.toRadians(90)); // funny hack... not sure why jittering off by 90 deg
-		//TODO: still jitters the first time a single joint is manipulated.
+		//int delta = (int) (p.getX()-xBegin);
+		//at.translate(delta, 0);
+		//xBegin = p.getX();
+		//this.x = x+delta;
 	}
+	
 }

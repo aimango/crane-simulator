@@ -19,15 +19,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class Game extends JPanel {
+public class DirectManip extends JPanel {
 	private static final long serialVersionUID = 1L; // get rid of warning
-	private ArrayList<Drawable> craneArms = new ArrayList<Drawable>();
+	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private Timer t;
 	private int fps = 40;
 	private int clickedIndex;
 	private boolean dragging = false;
 	
-	public Game(){
+	public DirectManip(){
 		super();
 		ActionListener repainter = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -38,24 +38,28 @@ public class Game extends JPanel {
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-		Tractor tractor = new Tractor(50,500, 0, null, Color.BLACK);
-		CraneArm kevin = new CraneArm(100, -200, Math.toRadians(180), tractor, Color.orange);
-		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, Color.red);
-		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, Color.yellow);
-		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, Color.pink);
-		craneArms.add(tractor);
-		craneArms.add(kevin);
-		craneArms.add(bob);
-		craneArms.add(jon);
-		craneArms.add(dan);
+		Color c = new Color(153, 102, 204);
+		Tractor tractor = new Tractor(50, 500, 0, null, c);
+		CraneArm kevin = new CraneArm(100, -200, Math.toRadians(180), tractor, c);
+		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, c);
+		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, c);
+		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, c);
+		Magnet m = new Magnet(-40, 125, 0, dan, c);
+		
+		craneParts.add(tractor);
+		craneParts.add(kevin);
+		craneParts.add(bob);
+		craneParts.add(jon);
+		craneParts.add(dan);
+		craneParts.add(m);
 		
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {				
 		        Point2D p = e.getPoint();
 
-		        for (int i = craneArms.size() - 1; i >= 0; i--) {
-		        	if (craneArms.get(i).isInside(p) ) {
+		        for (int i = craneParts.size() - 1; i >= 0; i--) {
+		        	if (craneParts.get(i).isInside(p) ) {
 		        		dragging = true;
 		        		System.out.println(i);
 		        		clickedIndex = i;
@@ -74,17 +78,16 @@ public class Game extends JPanel {
 		this.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
 				if (dragging) {
-					//System.out.println("Drag");
 					Point2D current = e.getPoint();
-					craneArms.get(clickedIndex).moveItem(current);
+					craneParts.get(clickedIndex).moveItem(current);
 				}
 			}
 		});
 	}
 	
 	public static void main(String[] args) {
-		Game canvas = new Game();
-		JFrame f = new JFrame("Crane");
+		DirectManip canvas = new DirectManip();
+		JFrame f = new JFrame("A02 - Direct Manipulation");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setSize(800, 600);
 		f.setContentPane(canvas);
@@ -93,9 +96,13 @@ public class Game extends JPanel {
 	}
 	
 	public void paintComponent(Graphics g) {
-		g.clearRect(0,0,800,600); // lol
-		for (int i = 0; i < craneArms.size(); i++){
-			final Drawable d = craneArms.get(i);
+		g.clearRect(0,0,800,600); // clear the window before redraws..
+		g.setColor(new Color(46,138,92));
+		g.fillRect(0, 530, 800, 50);
+		g.setColor(new Color(102,153,204));
+		g.fillRect(0, 0, 800, 530);
+		for (int i = 0; i < craneParts.size(); i++){
+			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);
 		}
 	}
