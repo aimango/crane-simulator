@@ -9,8 +9,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -24,7 +22,6 @@ import javax.swing.Timer;
 public class Game extends JPanel {
 	private static final long serialVersionUID = 1L; // get rid of warning
 	private ArrayList<Drawable> craneArms = new ArrayList<Drawable>();
-	private Tractor tractor;
 	private Timer t;
 	private int fps = 40;
 	private int clickedIndex;
@@ -41,17 +38,17 @@ public class Game extends JPanel {
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-		CraneArm kevin = new CraneArm(150, 310, Math.toRadians(180), null, Color.orange);
-		CraneArm bob = new CraneArm(0,60, Math.toRadians(40), kevin, Color.red);
-		CraneArm jon = new CraneArm (0,60, Math.toRadians(40), bob, Color.yellow);
-		CraneArm dan = new CraneArm (0, 60, Math.toRadians(40), jon, Color.pink);
+		Tractor tractor = new Tractor(50,500, 0, null, Color.BLACK);
+		CraneArm kevin = new CraneArm(100, -200, Math.toRadians(180), tractor, Color.orange);
+		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, Color.red);
+		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, Color.yellow);
+		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, Color.pink);
+		craneArms.add(tractor);
 		craneArms.add(kevin);
 		craneArms.add(bob);
 		craneArms.add(jon);
 		craneArms.add(dan);
 		
-		tractor = new Tractor(50,500, 0, null, Color.BLACK);
-		craneArms.add(tractor);
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {				
@@ -101,6 +98,5 @@ public class Game extends JPanel {
 			final Drawable d = craneArms.get(i);
 			d.paintComponent(g);
 		}
-		//tractor.paintComponent(g);
 	}
 }

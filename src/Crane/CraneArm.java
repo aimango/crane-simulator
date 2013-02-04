@@ -15,7 +15,7 @@ public class CraneArm extends Drawable {
 
 	public CraneArm(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
-		rect = new Rectangle(-25,-25,50,100);
+		rect = new Rectangle(-25,-25,50,150);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -28,34 +28,9 @@ public class CraneArm extends Drawable {
 		g2.setTransform(aiCurr); // set to
 	}
 	
-	protected AffineTransform getTransform(){
-		AffineTransform atParent;
-		if (parent != null){
-			atParent = new AffineTransform(parent.getTransform()); // recursive
-			atParent.concatenate(at);
-		} else {
-			atParent = at;
-		}
-		return atParent;
-	}
-	
-	protected Point2D getPointInverse(Point2D p){
-		AffineTransform temp = new AffineTransform(getTransform()); // copy cxr
-		try {
-			temp = temp.createInverse();
-		} catch (NoninvertibleTransformException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		Point2D d = new Point2D.Double();
-		temp.transform(p, d);
-		return d;
-	}
-	
 	protected boolean isInside(Point2D p){
 		Point2D d = getPointInverse(p);
-		if (d.getX() > -25 && d.getX() < 25 && d.getY() > -25 && d.getY() < 75 ){ // bounds check
+		if (d.getX() > -25 && d.getX() < 25 && d.getY() > -25 && d.getY() < 175 ){ // bounds check
 			System.out.print("yay");
 			return true;
 		}
