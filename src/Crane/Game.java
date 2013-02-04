@@ -1,31 +1,33 @@
 package Crane;
 
-
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-
 public class Game extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+	
 	ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	private Timer t;
 	private int fps = 40;
-
+	boolean dragging = false;
+	Point old, current;
+	
 	public Game(){
 		super();
 		ActionListener repainter = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-//				cur_angle += (radians_per_second/((double)fps));
-//				x = (int)(radius * Math.cos(cur_angle));
-//				y = (int)(radius * Math.sin(cur_angle));
 				repaint();
 			}
 		};
@@ -34,10 +36,45 @@ public class Game extends JPanel {
 		
 		//for (int i = 0; i < 5; i++)
 
-		Drawable kevin = new Drawable(100, 100, 0, null, Color.cyan);
-		Drawable bob = new Drawable(50,-80, Math.toRadians(0), kevin, Color.blue);
+		Drawable kevin = new Drawable(300, 300, Math.toRadians(180), null, Color.cyan);
+		Drawable bob = new Drawable(0,60, Math.toRadians(40), kevin, Color.blue);
+		Drawable jon = new Drawable (0,60, Math.toRadians(40), bob, Color.gray);
+		//Drawable dan = new Drawable (50, -80, Math.toRadians(0))
 		drawables.add(kevin);
 		drawables.add(bob);
+		drawables.add(jon);
+		
+
+		this.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {				
+		        Point p = e.getPoint();
+//			        if(d.rect.contains(p)) {
+//			        	old = p;
+//			        }
+		        for (int i = 0; i < drawables.size(); i++) {
+		        	if (drawables.get(i).isInside(p) ) {
+		        		dragging = true;
+		        		break;
+		        	}
+		        }
+		        System.out.println("Mouse pressed at " + p.x +", " + p.y);
+		        
+			}
+		});
+		this.addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseDragged(MouseEvent e) {
+				if (dragging) {
+					current = e.getPoint();
+	//					if (graphics2D != null)
+	//						graphics2D.drawLine(oldX, oldY, currentX, currentY);
+					repaint();
+					old = current;
+	//					oldX = currentX;
+	//					oldY = currentY;
+				}
+			}
+		});
+
 	}
 	
 	public static void main(String[] args) {
@@ -52,7 +89,30 @@ public class Game extends JPanel {
 	public void paintComponent(Graphics g) {
 		
 		for (int i = 0; i < drawables.size(); i++){
-			drawables.get(i).paintComponent(g);
+			final Drawable d = drawables.get(i);
+			d.paintComponent(g);
+			
+			d.addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent e) {				
+			        Point p = e.getPoint();
+			        if(d.rect.contains(p)) {
+			        	old = p;
+			        }
+			        System.out.println("Mouse pressed at " + p.x +", " + p.y);
+			        
+				}
+			});
+			d.addMouseMotionListener(new MouseMotionAdapter() {
+				public void mouseDragged(MouseEvent e) {
+					current = e.getPoint();
+//					if (graphics2D != null)
+//						graphics2D.drawLine(oldX, oldY, currentX, currentY);
+					repaint();
+					old = current;
+//					oldX = currentX;
+//					oldY = currentY;
+				}
+			});
 		}
 	}
 	
