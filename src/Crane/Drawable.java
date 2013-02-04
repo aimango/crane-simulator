@@ -61,7 +61,7 @@ public class Drawable extends JComponent {
 	}
 	
 	public boolean isInside(Point p){
-		AffineTransform temp = new AffineTransform(ai); // copy cxr
+		AffineTransform temp = new AffineTransform(getTransform()); // copy cxr
 		try {
 			temp = temp.createInverse();
 		} catch (NoninvertibleTransformException e) {
@@ -73,10 +73,15 @@ public class Drawable extends JComponent {
 		temp.transform(p, d);
 		
 		//inverseTransform(ptSrc, ptDst)
-		if (rect.contains(d)){
+		if (d.getX() > 0 && d.getX() < 50 && d.getY() > 0 && d.getY() < 100 ){
+			System.out.print("yay");
 			return true;
 		}
-		else
+		else{
+			System.out.print("nay");
 			return false;
+	
+		}
+
 	}
 }

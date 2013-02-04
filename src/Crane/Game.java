@@ -54,16 +54,22 @@ public class Game extends JPanel {
 		        for (int i = 0; i < drawables.size(); i++) {
 		        	if (drawables.get(i).isInside(p) ) {
 		        		dragging = true;
+		        		System.out.println(i);
 		        		break;
 		        	}
 		        }
 		        System.out.println("Mouse pressed at " + p.x +", " + p.y);
 		        
 			}
+		    public void mouseReleased(MouseEvent e) {
+		        System.out.println("Mouse released at " + e.getPoint().x + ", " + e.getPoint().y);
+		        dragging = false;
+		    }
 		});
 		this.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
 				if (dragging) {
+					System.out.println("Drag");
 					current = e.getPoint();
 	//					if (graphics2D != null)
 	//						graphics2D.drawLine(oldX, oldY, currentX, currentY);
