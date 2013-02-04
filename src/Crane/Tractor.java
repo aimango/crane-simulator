@@ -34,44 +34,33 @@ public class Tractor extends Drawable {
 		// Translate to where we want it displayed.
 		//g2.translate(50, 500);
 		
-		g2.setColor(Color.CYAN);
+		g2.setStroke(new BasicStroke(2));
+		g2.setColor(fillColor);
 	    int[] x = new int[]{0, 0, 20, 180, 200, 200};
 	    int[] y = new int[]{0,-100,-150, -150, -100, 0};
 	    g2.fillPolygon (x, y, x.length);
 
-	    g2.setColor(Color.BLUE);
+	    g2.setColor(Color.black);
 		g2.drawPolygon(x, y, x.length);
 		
-	    x = new int[]{80, 90, 110, 120};
-	    y = new int[]{-150,-180,-180, -150};
+	    x = new int[]{60, 70, 130, 140};
+	    y = new int[]{-150,-200,-200, -150};
 		g2.fillPolygon(x, y, x.length);
 
-		g2.setColor(Color.GRAY);
+		g2.setColor(Color.gray);
 		g2.fillRect(-10, 0, 220, 40);
 		
-		g2.setColor(Color.BLACK);
+		g2.setColor(Color.black);
 		g2.setStroke(dashed);
 		g2.drawRect(-10, 0, 220, 40);
 
 		g2.setTransform(aiCurr); // set to
 		
 	}
-//	
-//	public AffineTransform getTransform(){
-//		//AffineTransform aiChild = ai;
-//		AffineTransform atParent;
-//		if (parent != null){
-//			atParent = new AffineTransform(parent.getTransform()); // recursive
-//			atParent.concatenate(at);
-//		} else {
-//			atParent = at;
-//		}
-//		return atParent;
-//	}
-	
+
 	protected boolean isInside(Point2D p){
 		Point2D d = p;
-		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40 ){ // bounds check
+		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40){ // bounds check
 			xBegin = d.getX();
 			return true;
 		}
@@ -81,7 +70,6 @@ public class Tractor extends Drawable {
 	}
 
 	protected void moveItem(Point2D p) {
-		//System.out.print("trolololo"+p.getX()+" "+xBegin);
 		int delta = (int) (p.getX()-xBegin);
 		at.translate(delta, 0);
 		xBegin = p.getX();

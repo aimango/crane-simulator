@@ -1,11 +1,11 @@
 package Crane;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 
 public class CraneArm extends Drawable {
@@ -25,6 +25,10 @@ public class CraneArm extends Drawable {
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		g2.transform(getTransform()); // offset
 		g2.fill(rect);
+		
+		g2.setStroke(new BasicStroke(2));
+		g2.setColor(Color.black);
+		g2.draw(rect);
 		g2.setTransform(aiCurr); // set to
 	}
 	
@@ -43,5 +47,6 @@ public class CraneArm extends Drawable {
 		Point2D d = getPointInverse(p);
 		double angle = Math.atan2(d.getY(), d.getX());
 		at.rotate(angle-Math.toRadians(90)); // funny hack... not sure why jittering off by 90 deg
+		//TODO: still jitters the first time a single joint is manipulated.
 	}
 }

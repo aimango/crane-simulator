@@ -13,14 +13,13 @@ public class Drawable extends JComponent {
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	protected int x, y;
 	protected Drawable parent = null;
-	protected AffineTransform at;
+	protected AffineTransform at = new AffineTransform();
 	protected Color fillColor;
 
 	public Drawable(int x, int y, double angle, Drawable parent, Color fill){
 		this.x = x;
 		this.y = y;
 		this.parent = parent;
-		at = new AffineTransform();
 		at.translate(x, y);
 		at.rotate(angle);
 		this.fillColor = fill;
