@@ -12,7 +12,8 @@ public class CraneArm extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
-
+	//private Circle circ;
+	
 	public CraneArm(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
 		rect = new Rectangle(-25,-25,50,150);
@@ -26,9 +27,12 @@ public class CraneArm extends Drawable {
 		g2.transform(getTransform()); // offset
 		g2.fill(rect);
 		
+		
+		
 		g2.setStroke(new BasicStroke(2));
 		g2.setColor(Color.black);
 		g2.draw(rect);
+		g2.fillOval(-8, -20, 16, 16);
 		g2.setTransform(aiCurr); // set to
 	}
 	

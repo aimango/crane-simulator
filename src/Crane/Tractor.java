@@ -45,8 +45,11 @@ public class Tractor extends Drawable {
 		
 	    x = new int[]{60, 70, 130, 140};
 	    y = new int[]{-150,-200,-200, -150};
+	    g2.setColor(fillColor);
 		g2.fillPolygon(x, y, x.length);
-
+		g2.setColor(Color.black);
+		g2.drawPolygon(x, y, x.length);
+		
 		g2.setColor(Color.gray);
 		g2.fillRect(-10, 0, 220, 40);
 		
