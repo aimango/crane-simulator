@@ -5,24 +5,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 
 public class Tractor extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
-
+	double xBegin = -1;
+	
 	public Tractor(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
 	}
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		//g2.setColor(fillColor);
-		
-		//AffineTransform aiCurr = g2.getTransform(); // to recover at the end
-		//g2.transform(getTransform()); // offset
-		//g2.fill(rect);
-		
 		
 		// http://docs.oracle.com/javase/tutorial/2d/geometry/strokeandfill.html
 		final float dash1[] = {10.0f};
@@ -31,9 +27,12 @@ public class Tractor extends Drawable {
 	                        BasicStroke.JOIN_MITER,
 	                        10.0f, dash1, 0.0f);
 	    
+		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
+		g2.transform(getTransform()); // offset
+		
 		// Do all drawing with respect to the origin (0,0)
 		// Translate to where we want it displayed.
-		g2.translate(50, 500);
+		//g2.translate(50, 500);
 		
 		g2.setColor(Color.CYAN);
 	    int[] x = new int[]{0, 0, 20, 180, 200, 200};
@@ -53,21 +52,40 @@ public class Tractor extends Drawable {
 		g2.setColor(Color.BLACK);
 		g2.setStroke(dashed);
 		g2.drawRect(-10, 0, 220, 40);
+
+		g2.setTransform(aiCurr); // set to
 		
-		
-		//g2.setTransform(aiCurr); // set to
 	}
+//	
+//	public AffineTransform getTransform(){
+//		//AffineTransform aiChild = ai;
+//		AffineTransform atParent;
+//		if (parent != null){
+//			atParent = new AffineTransform(parent.getTransform()); // recursive
+//			atParent.concatenate(at);
+//		} else {
+//			atParent = at;
+//		}
+//		return atParent;
+//	}
 	
-	public AffineTransform getTransform(){
-		//AffineTransform aiChild = ai;
-		AffineTransform atParent;
-		if (parent != null){
-			atParent = new AffineTransform(parent.getTransform()); // recursive
-			atParent.concatenate(at);
-		} else {
-			atParent = at;
+	protected boolean isInside(Point2D p){
+		Point2D d = p;
+		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40 ){ // bounds check
+			xBegin = d.getX();
+			return true;
 		}
-		return atParent;
+		else{
+			return false;
+		}
+	}
+
+	protected void moveItem(Point2D p) {
+		//System.out.print("trolololo"+p.getX()+" "+xBegin);
+		int delta = (int) (p.getX()-xBegin);
+		at.translate(delta, 0);
+		xBegin = p.getX();
+		this.x = x+delta;
 	}
 	
 }

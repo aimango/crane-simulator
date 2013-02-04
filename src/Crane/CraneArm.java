@@ -64,7 +64,7 @@ public class CraneArm extends Drawable {
 		}
 	}
 
-	protected void moveArm(Point2D p) {
+	protected void moveItem(Point2D p) {
 		Point2D d = getPointInverse(p);
 		double angle = Math.atan2(d.getY(), d.getX());
 		at.rotate(angle-Math.toRadians(90)); // funny hack... not sure why jittering off by 90 deg
