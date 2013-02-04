@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -22,7 +23,7 @@ public class Game extends JPanel {
 	private Timer t;
 	private int fps = 40;
 	private boolean dragging = false;
-	Point old, current;
+	Point2D old, current;
 	int clickedIndex;
 	
 	public Game(){

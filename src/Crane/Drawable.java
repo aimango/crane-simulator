@@ -57,7 +57,7 @@ public class Drawable extends JComponent {
 		return aiParent;
 	}
 	
-	Point2D getPointInverse(Point p){
+	Point2D getPointInverse(Point2D p){
 		AffineTransform temp = new AffineTransform(getTransform()); // copy cxr
 		try {
 			temp = temp.createInverse();
@@ -70,25 +70,21 @@ public class Drawable extends JComponent {
 		temp.transform(p, d);
 		return d;
 	}
-	public boolean isInside(Point p){
+	
+	public boolean isInside(Point2D p){
 		Point2D d = getPointInverse(p);
-		
 		if (d.getX() > -25 && d.getX() < 25 && d.getY() > -25 && d.getY() < 75 ){
 			System.out.print("yay");
 			return true;
 		}
 		else{
-			System.out.print("nay");
 			return false;
 		}
-
 	}
-	public void moveArm(Point p) {
+
+	public void moveArm(Point2D p) {
 		Point2D d = getPointInverse(p);
 		double angle = Math.atan2(d.getY(), d.getX());
-		System.out.println("The angle before is "+ this.angle);
-		//this.angle += angle;
-		System.out.println("The angle after is "+ this.angle);
-		ai.rotate(angle);
+		ai.rotate(angle-Math.toRadians(90)); // a funny hack... not sure why its jitteriness is off by 90 deg
 	}
 }
