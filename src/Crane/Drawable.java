@@ -27,7 +27,7 @@ public class Drawable extends JComponent {
 
 	public void paintComponent(Graphics g) {}
 	
-	protected AffineTransform getTransform(){
+	protected AffineTransform getTransform() {
 		AffineTransform atParent;
 		if (parent != null){
 			atParent = new AffineTransform(parent.getTransform()); // recursive
@@ -38,8 +38,8 @@ public class Drawable extends JComponent {
 		return atParent;
 	}
 	
-	protected Point2D getPointInverse(Point2D p){
-		AffineTransform temp = new AffineTransform(getTransform()); // copy cxr
+	protected Point2D getPointInverse(Point2D p) {
+		AffineTransform temp = new AffineTransform(this.getTransform()); // copy cxr
 		try {
 			temp = temp.createInverse();
 		} catch (NoninvertibleTransformException e) {
@@ -52,7 +52,7 @@ public class Drawable extends JComponent {
 		return d;
 	}
 
-	protected boolean isInside(Point2D p){
+	protected boolean isInside(Point2D p) {
 		return false;
 	}
 

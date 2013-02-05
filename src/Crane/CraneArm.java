@@ -13,9 +13,9 @@ public class CraneArm extends Drawable {
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
 	
-	public CraneArm(int x, int y, double angle, Drawable parent, Color fill){
+	public CraneArm(int x, int y, double angle, Drawable parent, Color fill) {
 		super(x,y,angle,parent,fill);
-		rect = new Rectangle(-25,-25,50,150);
+		rect = new Rectangle(-25,-25,40,150);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -29,17 +29,17 @@ public class CraneArm extends Drawable {
 		g2.setStroke(new BasicStroke(2));
 		g2.setColor(Color.black);
 		g2.draw(rect);
-		g2.fillOval(-8, -20, 16, 16);
+		g2.setColor(Color.darkGray);
+		g2.fillOval(-12, -20, 16, 16);
 		g2.setTransform(aiCurr); // set to
 	}
 	
-	protected boolean isInside(Point2D p){
+	protected boolean isInside(Point2D p) {
 		p = getPointInverse(p);
-		if (p.getX() > -25 && p.getX() < 25 && p.getY() > -25 && p.getY() < 125 ){ // bounds check
+		if (p.getX() > -25 && p.getX() < 15 && p.getY() > -25 && p.getY() < 125){ // bounds check
 			System.out.print("yay");
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}

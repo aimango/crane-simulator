@@ -18,15 +18,13 @@ public class Tractor extends Drawable {
 	}
 	
 	public void paintComponent(Graphics g) {
-		Graphics2D g2 = (Graphics2D) g;
 		
 		// http://docs.oracle.com/javase/tutorial/2d/geometry/strokeandfill.html
 		final float dash1[] = {12.0f};
-	    final BasicStroke dashed = new BasicStroke(7.0f,
-	                        BasicStroke.CAP_BUTT,
-	                        BasicStroke.JOIN_MITER,
-	                        10.0f, dash1, 0.0f);
+	    final BasicStroke dashed = new BasicStroke(7.0f, BasicStroke.CAP_BUTT,
+	                        BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	    
+	    Graphics2D g2 = (Graphics2D) g;
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		g2.transform(getTransform()); // offset
 		
@@ -40,14 +38,14 @@ public class Tractor extends Drawable {
 		g2.fillRect(-10, 0, 220, 40);
 		
 	    int[] x = new int[]{0, 0, 20, 180, 200, 200};
-	    int[] y = new int[]{0,-100,-150, -150, -100, 0};
+	    int[] y = new int[]{0,-80,-100, -100, -80, 0};
 		g2.setColor(fillColor);
 	    g2.fillPolygon (x, y, x.length);
 	    g2.setColor(Color.black);
 		g2.drawPolygon(x, y, x.length);
 		
 	    x = new int[]{60, 70, 130, 140};
-	    y = new int[]{-150,-200,-200, -150};
+	    y = new int[]{-100,-130,-130, -100};
 	    g2.setColor(fillColor);
 		g2.fillPolygon(x, y, x.length);
 		g2.setColor(Color.black);
@@ -60,12 +58,11 @@ public class Tractor extends Drawable {
 		
 	}
 
-	protected boolean isInside(Point2D p){
-		if (p.getX() > x && p.getX() < x+230 && p.getY() > y && p.getY() < y+40){ // bounds check
+	protected boolean isInside(Point2D p) {
+		if (p.getX() > x - 10 && p.getX() < x+220 && p.getY() > y && p.getY() < y+40){ // bounds check
 			xBegin = p.getX();
 			return true;
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
