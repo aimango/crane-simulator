@@ -56,31 +56,39 @@ public class Magnet extends Drawable {
 			if ( (p1y >= 30 && p1y <= 40 && p4y >= 30 && p4y <= 40 && p1x >= 50 && p1x <= 150) || //CRAAAY coords checking MUAHAHAHA
 					(p1x >= -10 && p1x <= 0 && p4x >= -10 && p4x <= 0 && p4y >= -70 && p4y <= 0) || // 100 = block height, 30 = magnet height.
 					(p1x >= 80 && p1x <= 90 && p4x >= 80 && p4x <= 90 && p1y >= -70 && p1y <= 0)){ // same thing here.... 80 = magnet width :3
-				System.out.println("ATTACH!");
-				System.out.println("p1 coord (" + p1x + ", " + p1y + 
+				//System.out.println("ATTACH!");
+				System.out.println("attach\np1 coord (" + p1x + ", " + p1y + 
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 				hasBlock = true;
 				attachedBlockIndex = i;
-//				blocks.add(new Block(30,30,10,20,Math.toDegrees(0),this,Color.red));
-//				blocks.remove(i); // IT WORKS !!11312121ONE1 move it below if/else for now for easier testing..
-//				break; // break so we only pick up 1 block. if 2 are closeby then only pick the first one ;D
+				blocks.add(new Block(0,30,10,20,Math.toRadians(90),this,Color.red));
+				blocks.remove(i); // IT WORKS !!11312121ONE1
+
+				break; // break so we only pick up 1 block. if 2 are closeby then only pick the first one ;D
 			} else {
 				System.out.println("p1 coord (" + p1x + ", " + p1y + 
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 			}
-			blocks.add(new Block(0,30,10,20,Math.toRadians(90),this,Color.red));
-			blocks.remove(i); // IT WORKS !!11312121ONE1
 
 		}
 		System.out.println("YUP");
 	}
 	
 	protected void releaseBlock(){
-		blocks.add(new Block(1,1,1,1,0,null,Color.orange)); 
-		// ^ fix coords later XD based on where we wanna drop it..
-		// would probably need to transform inverse it again... or something.... and also check if it's parallel to
-		// the ground.
+		Point2D ground = getPointInverse (new Point2D.Double(0, 150));
+		ground = getPointInverse(ground);
+		System.out.println(ground.getX() + " " + ground.getY());
+		//blocks.get(attachedBlockIndex).moveItem(ground);
+//		Block b = blocks.get(attachedBlockIndex);
+//		Point2D p = getPointInverse(new Point2D.Double(b.getX(), b.getY()));
+//		System.out.print(p.getX() + " " + p.getY());
+//		blocks.add(new Block((int)p.getX(),(int)p.getY(),1,1,0,null,Color.orange)); 
+//		// ^ fix coords later XD based on where we wanna drop it..
+//		// would probably need to transform inverse it again... or something.... and also check if it's parallel to
+//		// the ground.
 		blocks.remove(attachedBlockIndex);
+		attachedBlockIndex = -1;
+		hasBlock = false; 
 	}
 
 	protected boolean isInside(Point2D p) {
@@ -89,8 +97,10 @@ public class Magnet extends Drawable {
 			//check if magnet is nearby... and attach it if it is. o/w continue with life
 			//would need to know about the list of blocks
 			if (!hasBlock) {
+				System.out.println("DOESNT HAVE BLOCK");
 				checkAttach();
 			} else {
+				System.out.println("HAS BLOCK. RELEASE");
 				releaseBlock();
 			}
 			return true;

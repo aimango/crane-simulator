@@ -27,7 +27,7 @@ public class Block extends Drawable {
 		g2.setColor(fillColor);
 		
 		if (parent != null) { // means it's attached to the magnet!
-			g2.translate(0,-90);
+			g2.translate(0, -90);
 		}
 		g2.fill(rect);
 		g2.setColor(Color.black);
@@ -44,6 +44,18 @@ public class Block extends Drawable {
 		} else {
 			return false;
 		}
+	}
+	
+	//when blocks are falling down.
+	//dont remove as child until it hits the ground.
+	//go through all the other blocks and check if position is below the placed block.
+	protected void moveItem(Point2D p){
+		System.out.println(y + " " + p.getY());
+		while(y > p.getY()){
+			y-=10;
+		}
+		System.out.println(y + " " + p.getY());
+		this.repaint();
 	}
 
 }

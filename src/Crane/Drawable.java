@@ -46,7 +46,7 @@ public class Drawable extends JComponent {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Point2D d = new Point2D.Double();
 		temp.transform(p, d);
 		return d;
