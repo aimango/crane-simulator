@@ -56,8 +56,8 @@ public class DirectManip extends JPanel {
 		craneParts.add(m);		
 		
 		c = new Color (184, 61, 122);
-		m.blocks.add(new Block(500, 300, 10, 20, 0, null, c));
-		m.blocks.add(new Block(600, 300, 10, 20, 0, null, c));
+		m.blocks.add(new Block(500, 300, 30, 100, 0, null, c));
+		m.blocks.add(new Block(600, 300, 100, 120, 0, null, c));
 //		m.blocks.add(new Block(500, 400, 10, 20, 0, null, c));
 //		m.blocks.add(new Block(600, 300, 10, 20, 0, null, c));
 //		m.blocks.add(new Block(600, 400, 10, 20, 0, null, c));
@@ -82,11 +82,11 @@ public class DirectManip extends JPanel {
 		        		break;
 		        	}
 		        }
-		        System.out.println("Mouse pressed at " + p.getX() +", " + p.getY());
+		        //System.out.println("Mouse pressed at " + p.getX() +", " + p.getY());
 			}
 
 		    public void mouseReleased(MouseEvent e) {
-		        System.out.println("Mouse released at " + e.getPoint().x + ", " + e.getPoint().y);
+		       // System.out.println("Mouse released at " + e.getPoint().x + ", " + e.getPoint().y);
 		        dragging = false;
 		    }
 		});

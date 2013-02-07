@@ -12,11 +12,14 @@ public class Block extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
+	protected int height, width;
 
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
 		super(x,y,angle,parent,fill);
 		//i should randomly generate a height and width : O and x,y..... meh.
-		rect = new Rectangle(0, 0, 30, 100);
+		rect = new Rectangle(0, 0, width, height);
+		this.height = height;
+		this.width = width;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -58,4 +61,10 @@ public class Block extends Drawable {
 		this.repaint();
 	}
 
+	public int getWidth(){
+		return this.width;
+	}
+	public int getHeight(){
+		return this.height;
+	}
 }

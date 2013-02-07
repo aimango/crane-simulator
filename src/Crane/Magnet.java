@@ -43,39 +43,48 @@ public class Magnet extends Drawable {
 			//have rectangular regions on each side of a block to check if there are some intersections
 			double x = blocks.get(i).x;
 			double y = blocks.get(i).y;
+			int width = blocks.get(i).getWidth();
+			int height = blocks.get(i).getHeight();
+			
+			System.out.println("Width "+width+" Height "+ height);
 			Point2D p1 = getPointInverse(new Point2D.Double(x, y));
-			Point2D p2 = getPointInverse(new Point2D.Double(x+30, y));
-			Point2D p3 = getPointInverse(new Point2D.Double(x+30, y+80));
-			Point2D p4 = getPointInverse(new Point2D.Double(x, y+80));
+			Point2D p2 = getPointInverse(new Point2D.Double(x+width, y));
+			Point2D p3 = getPointInverse(new Point2D.Double(x+width, y+height));
+			Point2D p4 = getPointInverse(new Point2D.Double(x, y+height));
 			
 			double p1x = p1.getX();
 			double p1y = p1.getY();
+			double p2x = p2.getX();
+			double p2y = p2.getY();
+			double p3x = p3.getX();
+			double p3y = p3.getY();
 			double p4x = p4.getX();
 			double p4y = p4.getY();
 
-			if ( (p1y >= 30 && p1y <= 40 && p4y >= 30 && p4y <= 40 && p1x >= 50 && p1x <= 150) || //CRAAAY coords checking MUAHAHAHA
-					(p1x >= -10 && p1x <= 0 && p4x >= -10 && p4x <= 0 && p4y >= -70 && p4y <= 0) || // 100 = block height, 30 = magnet height.
-					(p1x >= 80 && p1x <= 90 && p4x >= 80 && p4x <= 90 && p1y >= -70 && p1y <= 0)){ // same thing here.... 80 = magnet width :3
-				//System.out.println("ATTACH!");
+			//cray coord checking
+			if (p1y >= 30 && p1y <= 40 && p4y >= 30 && p4y <= 40 && p1x >= height/2 && p1x <= 80+height/2 ||
+				p4y >= 30 && p4y <= 40 && p3y >= 30 && p3y <= 40 && p4x >= width/2 && p4x <= 80+width/2 ||
+				p3y >= 30 && p3y <= 40 && p2y >= 30 && p2y <= 40 && p3x >= height/2 && p3x <= 80+height/2 ||
+				p2y >= 30 && p2y <= 40 && p1y >= 30 && p1y <= 40 && p2x >= width/2 && p1x <= 80+width/2){ 
+				
 				System.out.println("attach\np1 coord (" + p1x + ", " + p1y + 
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 				hasBlock = true;
 				attachedBlockIndex = i;
-				blocks.add(new Block(0,30,10,20,Math.toRadians(90),this,Color.red));
+				blocks.add(new Block(0,30,width,height,Math.toRadians(90),this,Color.red));
 				blocks.remove(i); // IT WORKS !!11312121ONE1
 
 				break; // break so we only pick up 1 block. if 2 are closeby then only pick the first one ;D
 			} else {
-				System.out.println("p1 coord (" + p1x + ", " + p1y + 
-						") p4 coord ("+ p4x + ", " + p4y + ")");
+				System.out.println("clicked but nothing to pick up");
+				System.out.println("p1 coord (" + p1x + ", " + p1y + ") p2 coord (" + p2x + ", " + p2y + 
+						") p3 coord ("+ p3x + ", " + p3y + ") p4 coord ("+ p4x + ", " + p4y + ")");
 			}
-
 		}
-		System.out.println("YUP");
 	}
 	
 	protected void releaseBlock(){
-		Point2D ground = getPointInverse (new Point2D.Double(0, 150));
+		Point2D ground = getPointInverse (new Point2D.Double(0, 550));
 		ground = getPointInverse(ground);
 		System.out.println(ground.getX() + " " + ground.getY());
 		//blocks.get(attachedBlockIndex).moveItem(ground);
@@ -86,8 +95,8 @@ public class Magnet extends Drawable {
 //		// ^ fix coords later XD based on where we wanna drop it..
 //		// would probably need to transform inverse it again... or something.... and also check if it's parallel to
 //		// the ground.
-		blocks.remove(attachedBlockIndex);
-		attachedBlockIndex = -1;
+		blocks.remove(blocks.size()-1);
+		//attachedBlockIndex = -1;
 		hasBlock = false; 
 	}
 
@@ -96,13 +105,13 @@ public class Magnet extends Drawable {
 		if (p.getX() > 0 && p.getX() < 80 && p.getY() > 0 && p.getY() < 30){ // bounds check
 			//check if magnet is nearby... and attach it if it is. o/w continue with life
 			//would need to know about the list of blocks
-			if (!hasBlock) {
-				System.out.println("DOESNT HAVE BLOCK");
-				checkAttach();
-			} else {
+			if (hasBlock) {
 				System.out.println("HAS BLOCK. RELEASE");
 				releaseBlock();
-			}
+			} else {
+				System.out.println("DOESNT HAVE BLOCK");
+				checkAttach();
+			} 
 			return true;
 		} else {
 			return false;
