@@ -56,7 +56,7 @@ public class DirectManip extends JPanel {
 		craneParts.add(m);		
 		
 		c = new Color (184, 61, 122);
-		m.blocks.add(new Block(500, 300, 30, 100, 0, null, c));
+		m.blocks.add(new Block(500, 300, 50, 100, 0, null, c));
 		m.blocks.add(new Block(600, 300, 100, 120, 0, null, c));
 //		m.blocks.add(new Block(500, 400, 10, 20, 0, null, c));
 //		m.blocks.add(new Block(600, 300, 10, 20, 0, null, c));

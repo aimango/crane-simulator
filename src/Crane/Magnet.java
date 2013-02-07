@@ -8,16 +8,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+//TODO:
+//Figure out block release & falling & placing.
+//Then, create an indicator light for EM on/off.
+//Then, do crayyyyy stuff with collision detection.
 
-// right now ONLY allow blocks to be picked up on the long end.. assuming right now that they all sit on their short end..
-// also only allows blocks to be picked up on the LHS rite now..
 public class Magnet extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
 	public ArrayList<Block> blocks = new ArrayList<Block>();
 	private boolean hasBlock = false;
-	private int attachedBlockIndex = -1;
 	
 	public Magnet(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
@@ -70,8 +71,7 @@ public class Magnet extends Drawable {
 				System.out.println("attach\np1 coord (" + p1x + ", " + p1y + 
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 				hasBlock = true;
-				attachedBlockIndex = i;
-				blocks.add(new Block(0,30,width,height,Math.toRadians(90),this,Color.red));
+				blocks.add(new Block(0,30,width,height,Math.toRadians(90),this,Color.red)); // somehow centre it....
 				blocks.remove(i); // IT WORKS !!11312121ONE1
 
 				break; // break so we only pick up 1 block. if 2 are closeby then only pick the first one ;D
@@ -84,9 +84,9 @@ public class Magnet extends Drawable {
 	}
 	
 	protected void releaseBlock(){
-		Point2D ground = getPointInverse (new Point2D.Double(0, 550));
+		Point2D ground = getPointInverse (new Point2D.Double(0, 50));
 		ground = getPointInverse(ground);
-		System.out.println(ground.getX() + " " + ground.getY());
+		System.out.println("ground " + ground.getX() + " " + ground.getY());
 		//blocks.get(attachedBlockIndex).moveItem(ground);
 //		Block b = blocks.get(attachedBlockIndex);
 //		Point2D p = getPointInverse(new Point2D.Double(b.getX(), b.getY()));
