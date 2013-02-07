@@ -48,10 +48,10 @@ public class Magnet extends Drawable {
 			int height = blocks.get(i).getHeight();
 			
 			System.out.println("Width "+width+" Height "+ height);
-			Point2D p1 = getPointInverse(new Point2D.Double(x, y));
-			Point2D p2 = getPointInverse(new Point2D.Double(x+width, y));
-			Point2D p3 = getPointInverse(new Point2D.Double(x+width, y+height));
-			Point2D p4 = getPointInverse(new Point2D.Double(x, y+height));
+			Point2D p1 = getPointInverse(new Point2D.Double(x, y), false);
+			Point2D p2 = getPointInverse(new Point2D.Double(x+width, y), false);
+			Point2D p3 = getPointInverse(new Point2D.Double(x+width, y+height), false);
+			Point2D p4 = getPointInverse(new Point2D.Double(x, y+height), false);
 			
 			double p1x = p1.getX();
 			double p1y = p1.getY();
@@ -84,24 +84,26 @@ public class Magnet extends Drawable {
 	}
 	
 	protected void releaseBlock(){
-		Point2D ground = getPointInverse (new Point2D.Double(0, 50));
-		ground = getPointInverse(ground);
+		Point2D ground = getPointInverse (new Point2D.Double(0, 50), false);
+		ground = getPointInverse(ground, false);
 		System.out.println("ground " + ground.getX() + " " + ground.getY());
 		//blocks.get(attachedBlockIndex).moveItem(ground);
-//		Block b = blocks.get(attachedBlockIndex);
-//		Point2D p = getPointInverse(new Point2D.Double(b.getX(), b.getY()));
-//		System.out.print(p.getX() + " " + p.getY());
-//		blocks.add(new Block((int)p.getX(),(int)p.getY(),1,1,0,null,Color.orange)); 
+		
+		Block b = blocks.get(blocks.size()-1);
+		System.out.println(b.getX() + " "+ b.getY());
+		Point2D p = getPointInverse(new Point2D.Double(b.getX(), b.getY()), true);
+		System.out.println(p.getX() + " " + p.getY());
+		blocks.remove(blocks.size()-1);
+		blocks.add(new Block((int)p.getX(),(int)p.getY()+30,b.getWidth(),b.getHeight(), 0, null, Color.orange)); 
 //		// ^ fix coords later XD based on where we wanna drop it..
 //		// would probably need to transform inverse it again... or something.... and also check if it's parallel to
 //		// the ground.
-		blocks.remove(blocks.size()-1);
-		//attachedBlockIndex = -1;
+		
 		hasBlock = false; 
 	}
 
 	protected boolean isInside(Point2D p) {
-		p = getPointInverse(p);
+		p = getPointInverse(p, false);
 		if (p.getX() > 0 && p.getX() < 80 && p.getY() > 0 && p.getY() < 30){ // bounds check
 			//check if magnet is nearby... and attach it if it is. o/w continue with life
 			//would need to know about the list of blocks

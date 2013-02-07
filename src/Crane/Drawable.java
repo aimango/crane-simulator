@@ -38,15 +38,16 @@ public class Drawable extends JComponent {
 		return atParent;
 	}
 	
-	protected Point2D getPointInverse(Point2D p) {
+	protected Point2D getPointInverse(Point2D p, boolean realWorld) {
 		AffineTransform temp = new AffineTransform(this.getTransform()); // copy cxr
-		try {
-			temp = temp.createInverse();
-		} catch (NoninvertibleTransformException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!realWorld){
+			try {
+				temp = temp.createInverse();
+			} catch (NoninvertibleTransformException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-
 		Point2D d = new Point2D.Double();
 		temp.transform(p, d);
 		return d;
