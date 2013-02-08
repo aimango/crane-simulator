@@ -117,13 +117,19 @@ public class DirectManip extends JPanel {
 		g.fillRect(0, 530, 800, 50);
 		g.setColor(new Color(102,153,204));
 		g.fillRect(0, 0, 800, 530);
+		
+		for (int i = 0; i < m.blocks.size(); i++){ // : (
+			final Block b = m.blocks.get(i);
+			b.paintComponent(g);
+		}
+		
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);
 		}
-		for (int i = 0; i < m.blocks.size(); i++){ // : (
-			final Block b = m.blocks.get(i);
-			b.paintComponent(g);
+
+		if (m.getOn()){
+			m.blockInteraction();
 		}
 	}
 }

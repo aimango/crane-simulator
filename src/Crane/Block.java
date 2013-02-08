@@ -33,6 +33,9 @@ public class Block extends Drawable {
 		
 		if (parent != null) { // means it's attached to the magnet!
 			g2.translate(0, -90);
+		} else if (fillColor == Color.orange){
+			g2.rotate(Math.toRadians(-90));
+			g2.translate(0,30);
 		}
 		g2.fill(rect);
 		g2.setColor(Color.black);
