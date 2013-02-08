@@ -9,8 +9,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 //TODO:
-//Figure out block release & falling & placing.
-//Then, create an indicator light for EM on/off.
+//Figure out block angle & falling & placing.
+//Do automatic EM detection - while(true) loop?
 //Then, do crayyyyy stuff with collision detection.
 
 public class Magnet extends Drawable {
@@ -90,14 +90,17 @@ public class Magnet extends Drawable {
 		//blocks.get(attachedBlockIndex).moveItem(ground);
 		
 		Block b = blocks.get(blocks.size()-1);
-		System.out.println(b.getX() + " "+ b.getY());
+		//System.out.println(b.getX() + " "+ b.getY());
 		Point2D p = getPointInverse(new Point2D.Double(b.getX(), b.getY()), true);
 		System.out.println(p.getX() + " " + p.getY());
+		
+		double angle = b.angle;
+//		b.getAngleUpdated(angle, true); // or something..
+//		angle = b.angle;
+		
 		blocks.remove(blocks.size()-1);
-		blocks.add(new Block((int)p.getX(),(int)p.getY()+30,b.getWidth(),b.getHeight(), 0, null, Color.orange)); 
-//		// ^ fix coords later XD based on where we wanna drop it..
-//		// would probably need to transform inverse it again... or something.... and also check if it's parallel to
-//		// the ground.
+		blocks.add(new Block((int)p.getX(),(int)p.getY()+30,b.getWidth(),b.getHeight(), angle, null, Color.orange)); 
+//		check if it's parallel to the ground.
 		
 		hasBlock = false; 
 	}

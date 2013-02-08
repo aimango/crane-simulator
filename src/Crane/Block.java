@@ -13,13 +13,15 @@ public class Block extends Drawable {
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	private Rectangle rect;
 	protected int height, width;
-
+	protected double angle;
+	
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
-		super(x,y,angle,parent,fill);
+		super(x, y, angle, parent, fill);
 		//i should randomly generate a height and width : O and x,y..... meh.
 		rect = new Rectangle(0, 0, width, height);
 		this.height = height;
 		this.width = width;
+		this.angle = angle;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -42,7 +44,6 @@ public class Block extends Drawable {
 	protected boolean isInside(Point2D p) {
 		Point2D d = p;
 		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40){ // bounds check
-			//xBegin = d.getX();
 			return true;
 		} else {
 			return false;
