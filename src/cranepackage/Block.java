@@ -18,7 +18,6 @@ public class Block extends Drawable {
 	
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
 		super(x, y, angle, parent, fill);
-		//i should randomly generate a height and width : O and x,y..... meh.
 		rect = new Rectangle(0, 0, width, height);
 		this.height = height;
 		this.width = width;
@@ -37,9 +36,7 @@ public class Block extends Drawable {
 		} else if (parent == null && angle != 0){
 			g2.rotate(Math.toRadians(-90));
 		}
-//		System.out.println("x,y = " + x + " " + y);
-//		if (parent != null && y < 530)
-//			y++;
+
 		g2.fill(rect);
 		g2.setColor(Color.black);
 		g2.draw(rect);
@@ -49,7 +46,7 @@ public class Block extends Drawable {
 
 	protected boolean isInside(Point2D p) {
 		Point2D d = p;
-		if (d.getX() > x && d.getX() < x+230 && d.getY() > y && d.getY() < y+40){ // bounds check
+		if (d.getX() > x && d.getX() < x+width){ // && d.getY() > y && d.getY() < y+height){ // bounds check
 			return true;
 		} else {
 			return false;
@@ -57,14 +54,13 @@ public class Block extends Drawable {
 	}
 	
 	//when blocks are falling down.
-	//dont remove as child until it hits the ground.
 	//go through all the other blocks and check if position is below the placed block.
 	protected void moveItem(Point2D p){
-		System.out.println(y + " " + p.getY());
+		System.out.println(y + " WHAT " + p.getY());
 		while(y > p.getY()){
 			y-=10;
 		}
-		System.out.println(y + " " + p.getY());
+		System.out.println(y + " WHAT " + p.getY());
 		this.repaint();
 	}
 

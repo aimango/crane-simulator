@@ -55,10 +55,8 @@ public class Drawable extends JComponent {
 
 	protected void getAngleUpdated(double angle, boolean realWorld){
 		AffineTransform temp = new AffineTransform(this.getTransform());
-		//double newAngle = 0;
 		temp.rotate(angle);
 		at=temp;
-		//return newAngle; //!?!?!?
 	}
 	
 	protected boolean isInside(Point2D p) {

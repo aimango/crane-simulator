@@ -24,6 +24,7 @@ public class DirectManip extends JPanel {
 	
 	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private Timer t;
+	private Timer tClear; // timer for deleting objects
 	private Magnet m;
 	private int fps = 40;
 	private int clickedIndex;
@@ -36,10 +37,23 @@ public class DirectManip extends JPanel {
 				repaint();
 			}
 		};
+		ActionListener clear = new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				// noob way of "destroying" my blocks
+				for (int i = 0; i < m.blocks.size(); i++){
+					final Block b = m.blocks.get(i);
+					if (b.fillColor == Color.gray)
+						m.blocks.remove(i);
+				}
+			}
+		};
 
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
+		tClear = new Timer(40000/fps, clear);
+		tClear.start();
+		
 		Color c = new Color(172, 0, 230);
 		Tractor tractor = new Tractor(50, 500, 0, null, c);
 		CraneArm kevin = new CraneArm(95, -130, Math.toRadians(180), tractor, c);
@@ -118,11 +132,16 @@ public class DirectManip extends JPanel {
 		g.setColor(new Color(128,159,255));
 		g.fillRect(0, 0, 800, 530); // sky
 		
-		for (int i = 0; i < m.blocks.size(); i++){ // : (
+		for (int i = 0; i < m.blocks.size(); i++){
 			final Block b = m.blocks.get(i);
 			b.paintComponent(g);
 		}
-		
+//		// noob way of "destroying" my blocks
+//		for (int i = 0; i < m.blocks.size(); i++){
+//			final Block b = m.blocks.get(i);
+//			if (b.fillColor == Color.black)
+//				m.blocks.remove(i);
+//		}
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);

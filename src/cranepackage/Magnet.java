@@ -65,7 +65,7 @@ public class Magnet extends Drawable {
 			double p4y = p4.getY();
 
 			//cray coord checking -- good
-			if (p1y >= 30 && p1y <= 40 && p4y >= 30 && p4y <= 40 && p1x >= height/2 && p1x <= 80+height/2){
+			if (p1y >= 28 && p1y <= 40 && p4y >= 28 && p4y <= 40 && p1x >= height/2 && p1x <= 80+height/2){
 				System.out.println("attach\np1 coord (" + p1x + ", " + p1y + 
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 				hasBlock = true;
@@ -74,7 +74,7 @@ public class Magnet extends Drawable {
 
 				break; 
 			} // good 
-			else if (p4y >= 30 && p4y <= 40 && p3y >= 30 && p3y <= 40 && p4x >= width/2 && p4x <= 80+width/2){
+			else if (p4y >= 28 && p4y <= 40 && p3y >= 28 && p3y <= 40 && p4x >= width/2 && p4x <= 80+width/2){
 				System.out.println("attach\np4 coord (" + p4x + ", " + p4y + 
 						") p3 coord ("+ p3x + ", " + p3y + ")");
 				hasBlock = true;
@@ -82,7 +82,7 @@ public class Magnet extends Drawable {
 				blocks.remove(i);
 
 				break; 
-			} else if (p3y >= 29 && p3y <= 40 && p2y >= 29 && p2y <= 40 && p3x >= height/2 && p3x <= 80+height/2){
+			} else if (p3y >= 28 && p3y <= 40 && p2y >= 28 && p2y <= 40 && p3x >= height/2 && p3x <= 80+height/2){
 				System.out.println("attach\np3 coord (" + p3x + ", " + p3y + 
 						") p2 coord ("+ p2x + ", " + p2y + ")");
 				hasBlock = true;
@@ -126,10 +126,53 @@ public class Magnet extends Drawable {
 	    return angle;
 	}
 	
+	//	check if it's parallel to the ground +/-5 degrees
+	private boolean checkAngleParallelish(double angle){
+		angle = Math.toDegrees(angle);
+		angle %= 90;
+		if (Math.abs(angle) < 5 || Math.abs(angle) > 85)
+			return true;
+		else
+			return false;
+	}
+	
+	private double getNewBlockLoc(Block b){
+		// so go through each point, find the one with the highest y value.
+		// get new p1 y value based on this high y value.
+		// go through block list for collision detection. -> look at their p1.y values
+
+		ArrayList<Point2D> points = new ArrayList<Point2D>();
+		points.add( getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true));
+		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y), true));
+		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y+b.getHeight()-120+30+1), true));
+		points.add( getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true));
+		double maxY = 0;
+		int index = -1;
+		for (int i = 0; i < points.size(); i++){
+			double currY = points.get(i).getY();
+			if ( currY > maxY){
+				maxY = currY;
+				index = i;
+			}
+		}
+		maxY = -1;
+		for (int i = 0; i < blocks.size(); i++){
+			if (blocks.get(i).isInside(points.get(index))){
+				maxY = blocks.get(i).y;
+				break;
+			}
+		}
+		if (maxY != -1){
+			return maxY;
+		} else {
+			return 530;
+		}
+	}
+	
 	protected void releaseBlock(){
-		Point2D ground = getPointInverse (new Point2D.Double(0, 50), false);
-		ground = getPointInverse(ground, false);
-		System.out.println("ground " + ground.getX() + " " + ground.getY());
+		//Point2D ground = getPointInverse (new Point2D.Double(0, 50), false);
+		//ground = getPointInverse(ground, false);
+		//System.out.println("ground " + ground.getX() + " " + ground.getY());
 		//blocks.get(attachedBlockIndex).moveItem(ground);
 		
 		Block b = blocks.get(blocks.size()-1);
@@ -137,12 +180,16 @@ public class Magnet extends Drawable {
 		
 		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true);
 		Point2D p4 = getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true);
-		double angle = getAngle(p1,p4);
+		double angle = getAngle(p1, p4);
+		
 		System.out.println("Angle "+Math.toDegrees(angle));
 		blocks.remove(blocks.size()-1); 
-		int ry = p1.getY() > 530 ? y:0;
-		blocks.add(new Block((int)p1.getX(),y,b.getHeight(),b.getWidth(), angle, null, new Color (255, 97, 215))); 
-//		check if it's parallel to the ground.
+		
+		double ry = getNewBlockLoc(b);
+		boolean angleOkay = checkAngleParallelish(angle);
+		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
+		blocks.add(new Block((int)p1.getX(), (int)ry, b.getHeight(), b.getWidth(), angle, null, c)); 
+
 		hasBlock = false; 
 	}
 
