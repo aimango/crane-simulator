@@ -51,7 +51,7 @@ public class DirectManip extends JPanel {
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-		tClear = new Timer(40000/fps, clear);
+		tClear = new Timer(10000/fps, clear);
 		tClear.start();
 		
 		Color c = new Color(172, 0, 230);
@@ -91,7 +91,7 @@ public class DirectManip extends JPanel {
 		        for (int i = craneParts.size() - 1; i >= 0; i--) {
 		        	if (craneParts.get(i).isInside(p) ) {
 		        		dragging = true;
-		        		System.out.println(i);
+		        		//System.out.println(i);
 		        		clickedIndex = i;
 		        		break;
 		        	}
@@ -136,12 +136,7 @@ public class DirectManip extends JPanel {
 			final Block b = m.blocks.get(i);
 			b.paintComponent(g);
 		}
-//		// noob way of "destroying" my blocks
-//		for (int i = 0; i < m.blocks.size(); i++){
-//			final Block b = m.blocks.get(i);
-//			if (b.fillColor == Color.black)
-//				m.blocks.remove(i);
-//		}
+
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);

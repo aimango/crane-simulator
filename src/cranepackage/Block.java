@@ -53,16 +53,24 @@ public class Block extends Drawable {
 		}
 	}
 	
+	protected boolean isInside(double x1, double x2) {
+		if (x1 < x && x2 > x || x1 > x){ 
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	//when blocks are falling down.
 	//go through all the other blocks and check if position is below the placed block.
-	protected void moveItem(Point2D p){
-		System.out.println(y + " WHAT " + p.getY());
-		while(y > p.getY()){
-			y-=10;
-		}
-		System.out.println(y + " WHAT " + p.getY());
-		this.repaint();
-	}
+//	protected void moveItem(Point2D p){
+//		System.out.println(y + " WHAT " + p.getY());
+//		while(y > p.getY()){
+//			y-=10;
+//		}
+//		System.out.println(y + " WHAT " + p.getY());
+//		this.repaint();
+//	}
 
 	public int getWidth(){
 		return this.width;

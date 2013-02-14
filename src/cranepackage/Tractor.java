@@ -21,16 +21,12 @@ public class Tractor extends Drawable {
 		
 		// http://docs.oracle.com/javase/tutorial/2d/geometry/strokeandfill.html
 		final float dash1[] = {12.0f};
-	    final BasicStroke dashed = new BasicStroke(7.0f, BasicStroke.CAP_BUTT,
+	    final BasicStroke dashed = new BasicStroke(4.0f, BasicStroke.CAP_BUTT,
 	                        BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	    
 	    Graphics2D g2 = (Graphics2D) g;
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		g2.transform(getTransform()); // offset
-		
-		// Do all drawing with respect to the origin (0,0)
-		// Translate to where we want it displayed.
-		//g2.translate(50, 500);
 		
 		g2.setStroke(new BasicStroke(2));
 
@@ -58,8 +54,10 @@ public class Tractor extends Drawable {
 		
 	}
 
+	//TODO: dont allow moving in the triangular parts..
 	protected boolean isInside(Point2D p) {
-		if (p.getX() > x - 10 && p.getX() < x+220 && p.getY() > y && p.getY() < y+40){ // bounds check
+		if (p.getX() > x - 10 && p.getX() < x+210 && p.getY() > y && p.getY() < y+40 ||
+				p.getX() >= x && p.getX() < x+200 && p.getY() >= y-100 && p.getY() < y){ // bounds check
 			xBegin = p.getX();
 			return true;
 		} else {

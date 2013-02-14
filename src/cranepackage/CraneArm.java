@@ -37,7 +37,6 @@ public class CraneArm extends Drawable {
 	protected boolean isInside(Point2D p) {
 		p = getPointInverse(p, false);
 		if (p.getX() > -25 && p.getX() < 15 && p.getY() > -25 && p.getY() < 125){ // bounds check
-			System.out.print("yay");
 			return true;
 		} else {
 			return false;

@@ -114,8 +114,7 @@ public class Magnet extends Drawable {
 	    double PI = Math.PI;
 	    if (dx == 0) // special case
 	        angle = dy >= 0? PI/2: -PI/2;
-	    else
-	    {
+	    else {
 	        angle = Math.atan(dy/dx);
 	        if (dx < 0) // hemisphere correction
 	            angle += PI;
@@ -136,7 +135,7 @@ public class Magnet extends Drawable {
 			return false;
 	}
 	
-	private double getNewBlockLoc(Block b){
+	private double getNewBlockLoc(Block b, boolean angleOkay){
 		// so go through each point, find the one with the highest y value.
 		// get new p1 y value based on this high y value.
 		// go through block list for collision detection. -> look at their p1.y values
@@ -146,21 +145,47 @@ public class Magnet extends Drawable {
 		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y), true));
 		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y+b.getHeight()-120+30+1), true));
 		points.add( getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true));
-		double maxY = 0;
-		int index = -1;
+		
+		// if (angleOkay), need to somehow get the lowest 2 points and check the intersections with isInside
+		// also... should base collision detection for angled blocks on where it would hit other blocks first.... bleh..
+		
+		double maxY = 0, maxY2 = 0;
+		int index = -1, index2 = -1;
+
 		for (int i = 0; i < points.size(); i++){
 			double currY = points.get(i).getY();
-			if ( currY > maxY){
+			if (currY >= maxY){
 				maxY = currY;
 				index = i;
+			} else if ((currY < maxY) && (currY > maxY2)){
+				maxY2 = currY;
+				index2 = i;
 			}
 		}
 		maxY = -1;
-		for (int i = 0; i < blocks.size(); i++){
-			if (blocks.get(i).isInside(points.get(index))){
-				maxY = blocks.get(i).y;
-				break;
+		if (angleOkay) {
+			double x1 = points.get(index).getX();
+			double x2 = points.get(index2).getX();
+			if (x1 > x2){
+				double temp = x2;
+				x2 = x1;
+				x1 = temp;
 			}
+			for (int i = 0; i < blocks.size(); i++){
+				Block c = blocks.get(i);
+				if (c.isInside(x1, x2)){
+					maxY = c.y - c.getHeight(); // cant subtract by height if falls at rotated loc..
+					break;
+				}
+			}
+		} else { 
+			for (int i = 0; i < blocks.size(); i++){
+				if (blocks.get(i).isInside(points.get(index))){
+					maxY = blocks.get(i).y;
+					break;
+				}
+			}
+
 		}
 		if (maxY != -1){
 			return maxY;
@@ -169,12 +194,17 @@ public class Magnet extends Drawable {
 		}
 	}
 	
+	// up to the nearest 10s
+	private double roundAngle(double angle){
+		angle = Math.toDegrees(angle);
+		angle /= 10;
+		angle = (int)(angle+0.5);
+		angle *= 10;
+		angle = Math.toRadians(angle);
+		return angle;
+	}
+	
 	protected void releaseBlock(){
-		//Point2D ground = getPointInverse (new Point2D.Double(0, 50), false);
-		//ground = getPointInverse(ground, false);
-		//System.out.println("ground " + ground.getX() + " " + ground.getY());
-		//blocks.get(attachedBlockIndex).moveItem(ground);
-		
 		Block b = blocks.get(blocks.size()-1);
 		System.out.println(b.x + " "+ b.y);
 		
@@ -185,8 +215,12 @@ public class Magnet extends Drawable {
 		System.out.println("Angle "+Math.toDegrees(angle));
 		blocks.remove(blocks.size()-1); 
 		
-		double ry = getNewBlockLoc(b);
 		boolean angleOkay = checkAngleParallelish(angle);
+		if (angleOkay){
+			angle = roundAngle(angle);
+			System.out.println("Angle rounded"+Math.toDegrees(angle));
+		}
+		double ry = getNewBlockLoc(b, angleOkay);
 		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
 		blocks.add(new Block((int)p1.getX(), (int)ry, b.getHeight(), b.getWidth(), angle, null, c)); 
 
@@ -215,7 +249,6 @@ public class Magnet extends Drawable {
 	
 	protected void blockInteraction(){
 		if (!hasBlock){
-			//System.out.println("DOESNT HAVE BLOCK");
 			checkAttach();
 		} 
 	}
