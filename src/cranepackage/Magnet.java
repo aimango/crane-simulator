@@ -8,6 +8,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+//TODO:
+//Figure out block angle & falling & placing.
+//Do automatic EM detection - while(true) loop?
+//Then, do crayyyyy stuff with collision detection.
 
 public class Magnet extends Drawable {
 
@@ -127,7 +131,7 @@ public class Magnet extends Drawable {
 						") p4 coord ("+ p4x + ", " + p4y + ")");
 				hasBlock = true;
 				blocks.get(i).x = 0;
-				blocks.get(i).y = 105+height/2;
+				blocks.get(i).y = 0;
 				blocks.get(i).parent = this;
 				blocks.get(i).at = new AffineTransform();
 				blocks.get(i).at.translate(0,105+height/2); // hackz
@@ -137,10 +141,9 @@ public class Magnet extends Drawable {
 					&& ((p3x < 0 && p4x >= -width/4) || (p3x >= -width/4 && p3x <= 0))){
 				System.out.println("attach\np4 coord (" + p4x + ", " + p4y + 
 						") p3 coord ("+ p3x + ", " + p3y + ")");
-				hasBlock = true;
 				blocks.get(i).x = 0;
-				blocks.get(i).y = 105+height/2;
-
+				blocks.get(i).y = 0;
+				hasBlock=true;
 				blocks.get(i).parent = this;
 				blocks.get(i).at = new AffineTransform();
 				blocks.get(i).at.translate(0,105+height/2); // hackz
@@ -150,10 +153,9 @@ public class Magnet extends Drawable {
 					&& ((p2y < 0 && p3y >= -height/4) || (p2y >= -height/4 && p2y <= 0))){
 				System.out.println("attach\np3 coord (" + p3x + ", " + p3y + 
 						") p2 coord ("+ p2x + ", " + p2y + ")");
-				hasBlock = true;
 				blocks.get(i).x = 0;
-				blocks.get(i).y = 105+height/2;
-
+				blocks.get(i).y = 0;
+				hasBlock = true;
 				blocks.get(i).parent = this;
 				blocks.get(i).at = new AffineTransform();
 				blocks.get(i).at.translate(0,105+height/2); // hackz
@@ -179,7 +181,7 @@ public class Magnet extends Drawable {
 		}
 	}
 
-	private double getNewBlockLoc(int currBlock, boolean angleOkay, double angle){
+	private double getNewBlockLoc(int currBlock, boolean angleOkay, double anglez){
 
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
@@ -194,8 +196,8 @@ public class Magnet extends Drawable {
 		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
 		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
 
-		double maxY = 0;
-		int index = -1;
+		double maxY = 0, maxY2 = 0;
+		int index = -1, index2 = -1;
 
 		for (int i = 0; i < points.size(); i++){
 			double currY = points.get(i).getY();
@@ -204,17 +206,29 @@ public class Magnet extends Drawable {
 				index = i;
 			}
 		}
-
+		points.remove(index);
+		for (int i = 0; i < points.size(); i++){
+			double currY = points.get(i).getY();
+			if (currY >= maxY2){
+				maxY2 = currY;
+				index2 = i;
+			}
+		}
 		//System.out.println("maxY, maxY2 "+ maxY+ " " + maxY2);
 		maxY = -1;
-		double height, width;
+
 		if (angleOkay) {
 			double lowestX, lowestX2, lowestY;
-			angle = Math.toDegrees(angle);
-
-			lowestX = angle % 180 == 0 ? b.x-b.getWidth()/2 : b.x-b.getHeight()/2;
-			lowestX2 = angle % 180 == 0 ? b.x+b.getWidth()/2 : b.x+b.getHeight()/2;
-			lowestY = angle % 180 == 0 ? b.y-b.getHeight()/2 : b.y-b.getWidth()/2;
+			anglez = Math.toDegrees(anglez);
+			if (anglez % 180 == 0) {
+				lowestX = b.x-b.getWidth()/2;
+				lowestX2 = b.x+b.getWidth()/2;
+				lowestY = b.y-b.getHeight()/2;
+			} else{
+				lowestX = b.x-b.getHeight()/2;
+				lowestX2 = b.x+b.getHeight()/2;
+				lowestY = b.y-b.getWidth()/2;
+			}
 
 			points2.add(getPointInverse(new Point2D.Double(lowestX, lowestY), true));
 			points2.add(getPointInverse(new Point2D.Double(lowestX2, lowestY), true));
@@ -225,8 +239,8 @@ public class Magnet extends Drawable {
 				Block c = blocks.get(i);
 				if (c.isInside(points2.get(0).getX(), points2.get(1).getX())){
 					System.out.println("why is "+ points2.get(0).getY());
-					double heightt = angle % 180 == 0 ? b.getWidth() : b.getHeight();
-					maxY = c.y - c.getHeight()/2 - heightt/2;
+					double height = anglez % 180 == 0 ? b.getWidth() : b.getHeight();
+					maxY = c.y - c.getHeight()/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
 					break;
 				}
 			}
@@ -242,18 +256,22 @@ public class Magnet extends Drawable {
 			System.out.println(maxY);
 			return maxY;
 		} else {
-			height = angle % 180 != 0 ? b.getHeight() : b.getWidth();
-			return 530-height/2;
+			double height = anglez % 180 != 0 ? b.getHeight() : b.getWidth();
+			return 530 - height/2;
 		}
 	}
 	
 	protected void releaseBlock(){
 		Block b = blocks.get(currBlock);
-		System.out.println(b.x + " "+ b.y);
+		System.out.println("B coords " + b.x + " "+ b.y);
 		
+		Point2D old1, old2;
+		old1 = new Point2D.Double(b.x, b.y-120+30+1);
+		old2 = new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1);
 		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true);
 		Point2D p4 = getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true);
-		double angle = getAngle(p1, p4);
+		//double angle = getAngle(p1, p4);
+		double angle = Math.atan2(p4.getY()-p1.getY(), p4.getX()-p1.getX());
 		
 		System.out.println("Angle "+Math.toDegrees(angle));
 		
@@ -272,7 +290,7 @@ public class Magnet extends Drawable {
 		blocks.get(currBlock).x = (int)p1.getX();
 		blocks.get(currBlock).y = (int)ry;
 		blocks.get(currBlock).at.translate(p1.getX(), ry);
-		blocks.get(currBlock).angle = angle; //?!?!
+		blocks.get(currBlock).angle = angle; 
 		blocks.get(currBlock).at.rotate(angle);
 		blocks.get(currBlock).fillColor = c;
 

@@ -15,6 +15,7 @@ public class Block extends Drawable {
 	private Rectangle rect;
 	protected int height, width;
 	protected double angle;
+	protected boolean onItsSide;
 	
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
 		super(x, y, angle, parent, fill);
@@ -22,6 +23,7 @@ public class Block extends Drawable {
 		this.height = height;
 		this.width = width;
 		this.angle = angle;
+		this.onItsSide = false;
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -33,9 +35,11 @@ public class Block extends Drawable {
 		g2.setColor(fillColor);
 		if (parent != null) { // means it's attached to the magnet!
 			g2.translate(0, -90);
-		} else if (parent == null && angle != 0){
-			g2.rotate(Math.toRadians(-90));
-		}
+		} 
+//		else if (parent == null && angle != 0){
+//			//System.out.println("Hello");
+//			g2.rotate(Math.toRadians(-90));
+//		}
 
 		g2.fill(rect);
 		g2.setColor(Color.black);
@@ -55,7 +59,7 @@ public class Block extends Drawable {
 	
 	protected boolean isInside(double x1, double x2) {
 		System.out.println("x1, x2 " + x1 + " " + x2);
-		if (x1 < x-width/2 && x2 > x-width/2 || x1 > x-width/2){ 
+		if ( (x1 < x-width/2 && x2 > x-width/2) || x1 > x-width/2){ 
 			return true;
 		} else {
 			return false;
