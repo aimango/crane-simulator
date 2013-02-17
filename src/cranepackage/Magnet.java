@@ -214,7 +214,8 @@ public class Magnet extends Drawable {
 				if (c.isInside(points.get(0).getX(), points.get(1).getX())){
 					System.out.println("why is "+ points.get(0).getY());
 					double height = b.onItsSide ? b.getWidth() : b.getHeight();
-					yLoc = c.y - c.getHeight()/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
+					double cheight = c.onItsSide ? c.getWidth() : c.getHeight();
+					yLoc = c.y - cheight/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
 					break;
 				}
 			}
