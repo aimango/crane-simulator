@@ -54,6 +54,7 @@ public class Block extends Drawable {
 	}
 	
 	protected boolean isInside(double x1, double x2) {
+		System.out.println("x1, x2 " + x1 + " " + x2);
 		if (x1 < x-width/2 && x2 > x-width/2 || x1 > x-width/2){ 
 			return true;
 		} else {
