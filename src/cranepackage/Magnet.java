@@ -206,12 +206,12 @@ public class Magnet extends Drawable {
 //
 //			points2.add(getPointInverse(new Point2D.Double(lowestX, lowestY), true));
 //			points2.add(getPointInverse(new Point2D.Double(lowestX2, lowestY), true));
-			//System.out.println("x1, x2 "+ points2.get(0).getX() + " " + points2.get(1).getX());
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
 				Block c = blocks.get(i);
-				if (c.isInside(points.get(0).getX(), points.get(1).getX())){
+				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
+						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
 					System.out.println("why is "+ points.get(0).getY());
 					double height = b.onItsSide ? b.getWidth() : b.getHeight();
 					double cheight = c.onItsSide ? c.getWidth() : c.getHeight();
