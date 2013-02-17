@@ -8,10 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-//TODO:
-//Figure out block angle & falling & placing.
-//Do automatic EM detection - while(true) loop?
-//Then, do crayyyyy stuff with collision detection.
 
 public class Magnet extends Drawable {
 
@@ -108,23 +104,12 @@ public class Magnet extends Drawable {
 			double y = blocks.get(i).y;
 			int width = blocks.get(i).getWidth();
 			int height = blocks.get(i).getHeight();
-			double angle = Math.toDegrees(blocks.get(i).angle);
 			
-			Point2D p1, p2, p3, p4;
+			Point2D p1 = getPointInverse(new Point2D.Double(x-width/2, y-height/2), false);
+			Point2D p2 = getPointInverse(new Point2D.Double(x+width/2, y-height/2), false);
+			Point2D p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
+			Point2D p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
 			
-//			if (angle % 180 != 0 || angle == 0){
-				System.out.println("nott angle is "+ angle);
-				p1 = getPointInverse(new Point2D.Double(x-width/2, y-height/2), false);
-				p2 = getPointInverse(new Point2D.Double(x+width/2, y-height/2), false);
-				p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
-				p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
-//			} else {
-//				System.out.println("angle is "+ angle);
-//				p1 = getPointInverse(new Point2D.Double(x-height/2, y-width/2), false);
-//				p2 = getPointInverse(new Point2D.Double(x+height/2, y-width/2), false);
-//				p3 = getPointInverse(new Point2D.Double(x+height/2, y+width/2), false);
-//				p4 = getPointInverse(new Point2D.Double(x-height/2, y+width/2), false);
-//			}
 			double p1x = p1.getX();
 			double p1y = p1.getY();
 			double p2x = p2.getX();
@@ -152,6 +137,7 @@ public class Magnet extends Drawable {
 					&& ((p3x < 0 && p4x >= -width/4) || (p3x >= -width/4 && p3x <= 0))){
 				System.out.println("attach\np4 coord (" + p4x + ", " + p4y + 
 						") p3 coord ("+ p3x + ", " + p3y + ")");
+				hasBlock = true;
 				blocks.get(i).x = 0;
 				blocks.get(i).y = 105+height/2;
 
@@ -164,6 +150,7 @@ public class Magnet extends Drawable {
 					&& ((p2y < 0 && p3y >= -height/4) || (p2y >= -height/4 && p2y <= 0))){
 				System.out.println("attach\np3 coord (" + p3x + ", " + p3y + 
 						") p2 coord ("+ p2x + ", " + p2y + ")");
+				hasBlock = true;
 				blocks.get(i).x = 0;
 				blocks.get(i).y = 105+height/2;
 
@@ -186,8 +173,8 @@ public class Magnet extends Drawable {
 				currBlock = i;
 				break;
 			} else {
-//				System.out.println("p1 coord (" + p1x + ", " + p1y + ") p2 coord (" + p2x + ", " + p2y + 
-//						") p3 coord ("+ p3x + ", " + p3y + ") p4 coord ("+ p4x + ", " + p4y + ")");
+				System.out.println("p1 coord (" + p1x + ", " + p1y + ") p2 coord (" + p2x + ", " + p2y + 
+						") p3 coord ("+ p3x + ", " + p3y + ") p4 coord ("+ p4x + ", " + p4y + ")");
 			}
 		}
 	}
@@ -203,12 +190,12 @@ public class Magnet extends Drawable {
 //		points.add( getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true));	
 
 		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-120+30+1), true));
-		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-120+30+1), true));
+		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2), true));
 		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
 		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
 
-		double maxY = 0, maxY2 = 0;
-		int index = -1, index2 = -1;
+		double maxY = 0;
+		int index = -1;
 
 		for (int i = 0; i < points.size(); i++){
 			double currY = points.get(i).getY();
@@ -217,20 +204,14 @@ public class Magnet extends Drawable {
 				index = i;
 			}
 		}
-		points.remove(index);
-		for (int i = 0; i < points.size(); i++){
-			double currY = points.get(i).getY();
-			if (currY >= maxY2){
-				maxY2 = currY;
-				index2 = i;
-			}
-		}
+
 		//System.out.println("maxY, maxY2 "+ maxY+ " " + maxY2);
 		maxY = -1;
-
+		double height, width;
 		if (angleOkay) {
 			double lowestX, lowestX2, lowestY;
 			angle = Math.toDegrees(angle);
+
 			lowestX = angle % 180 == 0 ? b.x-b.getWidth()/2 : b.x-b.getHeight()/2;
 			lowestX2 = angle % 180 == 0 ? b.x+b.getWidth()/2 : b.x+b.getHeight()/2;
 			lowestY = angle % 180 == 0 ? b.y-b.getHeight()/2 : b.y-b.getWidth()/2;
@@ -244,8 +225,8 @@ public class Magnet extends Drawable {
 				Block c = blocks.get(i);
 				if (c.isInside(points2.get(0).getX(), points2.get(1).getX())){
 					System.out.println("why is "+ points2.get(0).getY());
-					double height = angle % 180 == 0 ? b.getWidth() : b.getHeight();
-					maxY = c.y - c.getHeight()/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
+					double heightt = angle % 180 == 0 ? b.getWidth() : b.getHeight();
+					maxY = c.y - c.getHeight()/2 - heightt/2;
 					break;
 				}
 			}
@@ -261,22 +242,17 @@ public class Magnet extends Drawable {
 			System.out.println(maxY);
 			return maxY;
 		} else {
-			return 530-b.getHeight()/2;
+			height = angle % 180 != 0 ? b.getHeight() : b.getWidth();
+			return 530-height/2;
 		}
 	}
 	
 	protected void releaseBlock(){
 		Block b = blocks.get(currBlock);
 		System.out.println(b.x + " "+ b.y);
-		double angleOrig = b.angle;
-		Point2D p1, p4;
-		if (Math.toDegrees(angleOrig) % 180 != 0){
-			p1 = getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-120+30+1), true);
-			p4 = getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-120+30+1), true);
-		} else {
-			p1 = getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y-b.getWidth()/2-120+30+1), true);
-			p4 = getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y-b.getWidth()/2-120+30+1), true);
-		}
+		
+		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true);
+		Point2D p4 = getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true);
 		double angle = getAngle(p1, p4);
 		
 		System.out.println("Angle "+Math.toDegrees(angle));
