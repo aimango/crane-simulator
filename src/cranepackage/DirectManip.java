@@ -19,9 +19,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+
 public class DirectManip extends JPanel {
-	private static final long serialVersionUID = 1L; // get rid of warning
 	
+	private static final long serialVersionUID = 1L; // get rid of warning
 	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private Timer t;
 	private Timer tClear; // timer for deleting objects
@@ -56,11 +57,11 @@ public class DirectManip extends JPanel {
 		
 		Color c = new Color(172, 0, 230);
 		Tractor tractor = new Tractor(50, 500, 0, null, c);
-		CraneArm kevin = new CraneArm(95, -130, Math.toRadians(180), tractor, c);
+		CraneArm kevin = new CraneArm(100, -130, Math.toRadians(180), tractor, c);
 		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, c);
 		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, c);
 		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, c);
-		m = new Magnet(-40, 125, 0, dan, c);
+		m = new Magnet(0, 125, 0, dan, c);
 
 		craneParts.add(tractor);
 		craneParts.add(kevin);
@@ -70,8 +71,8 @@ public class DirectManip extends JPanel {
 		craneParts.add(m);		
 		
 		c = new Color (255, 97, 215);
-		m.blocks.add(new Block(500, 500, 50, 100, 0, null, c));
-		m.blocks.add(new Block(610, 450, 100, 120, 0, null, c));
+		m.blocks.add(new Block(400, 320, 50, 100, 0, null, c));
+		m.blocks.add(new Block(520, 300, 100, 120, 0, null, c));
 //		m.blocks.add(new Block(500, 400, 10, 20, 0, null, c));
 //		m.blocks.add(new Block(600, 300, 10, 20, 0, null, c));
 //		m.blocks.add(new Block(600, 400, 10, 20, 0, null, c));
@@ -96,11 +97,9 @@ public class DirectManip extends JPanel {
 		        		break;
 		        	}
 		        }
-		        //System.out.println("Mouse pressed at " + p.getX() +", " + p.getY());
 			}
 
 		    public void mouseReleased(MouseEvent e) {
-		       // System.out.println("Mouse released at " + e.getPoint().x + ", " + e.getPoint().y);
 		        dragging = false;
 		    }
 		});
@@ -131,17 +130,17 @@ public class DirectManip extends JPanel {
 		g.fillRect(0, 530, 800, 50); // grass 
 		g.setColor(new Color(128,159,255));
 		g.fillRect(0, 0, 800, 530); // sky
-		
-		for (int i = 0; i < m.blocks.size(); i++){
-			final Block b = m.blocks.get(i);
-			b.paintComponent(g);
-		}
 
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);
 		}
 
+		for (int i = 0; i < m.blocks.size(); i++){
+			final Block b = m.blocks.get(i);
+			b.paintComponent(g);
+		}
+		
 		if (m.getOn()){
 			m.blockInteraction();
 		}

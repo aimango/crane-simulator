@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
+
 public class CraneArm extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
@@ -15,7 +16,7 @@ public class CraneArm extends Drawable {
 	
 	public CraneArm(int x, int y, double angle, Drawable parent, Color fill) {
 		super(x,y,angle,parent,fill);
-		rect = new Rectangle(-25,-25,40,150);
+		rect = new Rectangle(-20,-25,40,150);
 	}
 	
 	public void paintComponent(Graphics g) {

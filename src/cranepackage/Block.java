@@ -18,7 +18,7 @@ public class Block extends Drawable {
 	
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
 		super(x, y, angle, parent, fill);
-		rect = new Rectangle(0, 0, width, height);
+		rect = new Rectangle(-width/2, -height/2, width, height);
 		this.height = height;
 		this.width = width;
 		this.angle = angle;
@@ -46,7 +46,7 @@ public class Block extends Drawable {
 
 	protected boolean isInside(Point2D p) {
 		Point2D d = p;
-		if (d.getX() > x && d.getX() < x+width){ // && d.getY() > y && d.getY() < y+height){ // bounds check
+		if (d.getX() > x-width/2 && d.getX() < x+width/2){ // && d.getY() > y && d.getY() < y+height){ // bounds check
 			return true;
 		} else {
 			return false;
@@ -54,7 +54,7 @@ public class Block extends Drawable {
 	}
 	
 	protected boolean isInside(double x1, double x2) {
-		if (x1 < x && x2 > x || x1 > x){ 
+		if (x1 < x-width/2 && x2 > x-width/2 || x1 > x-width/2){ 
 			return true;
 		} else {
 			return false;

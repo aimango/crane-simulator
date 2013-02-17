@@ -9,7 +9,7 @@ import java.awt.geom.Point2D;
 
 
 public class Tractor extends Drawable {
-
+	
 	private static final long serialVersionUID = 1L;  // get rid of warning
 	double xBegin = -1;
 	
@@ -51,7 +51,6 @@ public class Tractor extends Drawable {
 		g2.drawRect(-10, 0, 220, 40);
 
 		g2.setTransform(aiCurr); // set to
-		
 	}
 
 	//TODO: dont allow moving in the triangular parts..

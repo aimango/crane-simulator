@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 
+
 public class Drawable extends JComponent {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
