@@ -59,7 +59,7 @@ public class Magnet extends Drawable {
 	private double roundAngle(double angle){
 		angle = Math.toDegrees(angle);
 		angle /= 10;
-		angle = (int)(angle+0.5);
+		angle = angle > 0 ? (int)(angle+0.5) : (int)(angle-0.5);
 		angle *= 10;
 		angle = Math.toRadians(angle);
 		return angle;
@@ -102,18 +102,26 @@ public class Magnet extends Drawable {
 		g2.setTransform(aiCurr); // set to	
 	}
 
-	protected void checkAttach(){
+	protected void attach(){
 		for (int i = 0; i < blocks.size(); i++){
-			double x = blocks.get(i).x;
-			double y = blocks.get(i).y;
-			int width = blocks.get(i).getWidth();
-			int height = blocks.get(i).getHeight();
+			Block b = blocks.get(i);
+			double x = b.x;
+			double y = b.y;
+			int width = b.getWidth();
+			int height = b.getHeight();
 			
-			Point2D p1 = getPointInverse(new Point2D.Double(x-width/2, y-height/2), false);
-			Point2D p2 = getPointInverse(new Point2D.Double(x+width/2, y-height/2), false);
-			Point2D p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
-			Point2D p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
-			
+			Point2D p1, p2, p3, p4;
+			if (!b.onItsSide){
+				p1 = getPointInverse(new Point2D.Double(x-width/2, y-height/2), false);
+				p2 = getPointInverse(new Point2D.Double(x+width/2, y-height/2), false);
+				p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
+				p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
+			} else {
+				p1 = getPointInverse(new Point2D.Double(x-height/2, y-width/2), false);
+				p2 = getPointInverse(new Point2D.Double(x+height/2, y-width/2), false);
+				p3 = getPointInverse(new Point2D.Double(x+height/2, y+width/2), false);
+				p4 = getPointInverse(new Point2D.Double(x-height/2, y+width/2), false);
+			}
 			double p1x = p1.getX();
 			double p1y = p1.getY();
 			double p2x = p2.getX();
@@ -123,140 +131,128 @@ public class Magnet extends Drawable {
 			double p4x = p4.getX();
 			double p4y = p4.getY();
 
-			//cray coord checking
-			//System.out.println("height/2 is " + height/2+ " width/2 is "+width/2);
-			if (p1x >= 40 && p1x <= 50 && p4x >= 40 && p4x <= 50 
-					&& ((p4y < 0 && p1y >= -width/4) || (p4y >= -width/4 && p4y <= 0))){
-				System.out.println("attach\np1 coord (" + p1x + ", " + p1y + 
-						") p4 coord ("+ p4x + ", " + p4y + ")");
-				hasBlock = true;
-				blocks.get(i).x = 0;
-				blocks.get(i).y = 0;
-				blocks.get(i).parent = this;
-				blocks.get(i).at = new AffineTransform();
-				blocks.get(i).at.translate(0,105+height/2); // hackz
-				currBlock = i;
-				break;
-			} else if (p3y >= 15 && p3y <= 25 && p4y >= 15 && p4y <= 25 
-					&& ((p3x < 0 && p4x >= -width/4) || (p3x >= -width/4 && p3x <= 0))){
-				System.out.println("attach\np4 coord (" + p4x + ", " + p4y + 
-						") p3 coord ("+ p3x + ", " + p3y + ")");
-				blocks.get(i).x = 0;
-				blocks.get(i).y = 0;
-				hasBlock=true;
-				blocks.get(i).parent = this;
-				blocks.get(i).at = new AffineTransform();
-				blocks.get(i).at.translate(0,105+height/2); // hackz
-				currBlock = i;
-				break; 
-			} else if (p3x >= 40 && p3x <= 50 && p2x >= 40 && p2x <= 50 
-					&& ((p2y < 0 && p3y >= -height/4) || (p2y >= -height/4 && p2y <= 0))){
-				System.out.println("attach\np3 coord (" + p3x + ", " + p3y + 
-						") p2 coord ("+ p2x + ", " + p2y + ")");
-				blocks.get(i).x = 0;
-				blocks.get(i).y = 0;
-				hasBlock = true;
-				blocks.get(i).parent = this;
-				blocks.get(i).at = new AffineTransform();
-				blocks.get(i).at.translate(0,105+height/2); // hackz
-				currBlock = i;
-				break; 
-			} else if (p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25 
-					&& ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0))){
-				System.out.println("attach\np2 coord (" + p2x + ", " + p2y + 
-						") p1 coord ("+ p1x + ", " + p1y + ")");
-				hasBlock = true;
-				blocks.get(i).x = 0;
-				blocks.get(i).y = 105+height/2;
-
-				blocks.get(i).parent = this;
-				blocks.get(i).at = new AffineTransform();
-				blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
-				currBlock = i;
-				break;
-			} else {
-				System.out.println("p1 coord (" + p1x + ", " + p1y + ") p2 coord (" + p2x + ", " + p2y + 
-						") p3 coord ("+ p3x + ", " + p3y + ") p4 coord ("+ p4x + ", " + p4y + ")");
+			if (!b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
+				if ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
+					
+					System.out.println("attach\np2 coord (" + p2x + ", " + p2y + 
+							") p1 coord ("+ p1x + ", " + p1y + ")");
+					hasBlock = true;
+					blocks.get(i).x = 0;
+					blocks.get(i).y = 105+height/2;
+		
+					blocks.get(i).parent = this;
+					blocks.get(i).at = new AffineTransform();
+					blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
+					currBlock = i;
+					break;
+				}
+			}
+			else if (b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
+				if ((p1x < 0 && p2x >= -height/4) || (p1x >= -height/4 && p1x <= 0)){
+					
+					System.out.println("attach\np2 coord (" + p2x + ", " + p2y + 
+							") p1 coord ("+ p1x + ", " + p1y + ")");
+					hasBlock = true;
+					blocks.get(i).x = 0;
+					blocks.get(i).y = 105+width/2; 
+		
+					blocks.get(i).parent = this;
+					blocks.get(i).at = new AffineTransform();
+					blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
+					currBlock = i;
+					break;
+				}
 			}
 		}
 	}
 
 	private double getNewBlockLoc(int currBlock, boolean angleOkay, double anglez){
-
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 		ArrayList<Point2D> points2 = new ArrayList<Point2D>();
-//		points.add( getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true));
-//		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y), true));
-//		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth(), b.y+b.getHeight()-120+30+1), true));
-//		points.add( getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true));	
 
-		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-120+30+1), true));
-		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2), true));
-		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
-		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-120+30+1), true));
-
-		double maxY = 0, maxY2 = 0;
-		int index = -1, index2 = -1;
-
-		for (int i = 0; i < points.size(); i++){
-			double currY = points.get(i).getY();
-			if (currY >= maxY){
-				maxY = currY;
-				index = i;
-			}
+//		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y), true);
+//		Point2D p2 = getPointInverse(new Point2D.Double(b.x+width, b.y), true);
+//		//real life angle.
+//		double angle = Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
+//		
+		if (!b.onItsSide){
+			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-105), true));
+		} else {
+			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y-b.getWidth()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y-b.getWidth()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y+b.getWidth()/2-105), true));
+			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 		}
-		points.remove(index);
-		for (int i = 0; i < points.size(); i++){
-			double currY = points.get(i).getY();
-			if (currY >= maxY2){
-				maxY2 = currY;
-				index2 = i;
-			}
-		}
+
 		//System.out.println("maxY, maxY2 "+ maxY+ " " + maxY2);
-		maxY = -1;
+		double yLoc = -1;
 
 		if (angleOkay) {
-			double lowestX, lowestX2, lowestY;
+//			double lowestX, lowestX2, lowestY;
 			anglez = Math.toDegrees(anglez);
-			if (anglez % 180 == 0) {
-				lowestX = b.x-b.getWidth()/2;
-				lowestX2 = b.x+b.getWidth()/2;
-				lowestY = b.y-b.getHeight()/2;
-			} else{
-				lowestX = b.x-b.getHeight()/2;
-				lowestX2 = b.x+b.getHeight()/2;
-				lowestY = b.y-b.getWidth()/2;
-			}
-
-			points2.add(getPointInverse(new Point2D.Double(lowestX, lowestY), true));
-			points2.add(getPointInverse(new Point2D.Double(lowestX2, lowestY), true));
-			System.out.println("x1, x2 "+ points2.get(0).getX() + " " + points2.get(1).getX());
+//			if (anglez % 180 == 0) {
+//				lowestX = b.x-b.getWidth()/2;
+//				lowestX2 = b.x+b.getWidth()/2;
+//				lowestY = b.y-b.getHeight()/2;
+//			} else{
+//				lowestX = b.x-b.getHeight()/2;
+//				lowestX2 = b.x+b.getHeight()/2;
+//				lowestY = b.y-b.getWidth()/2;
+//			}
+//
+//			points2.add(getPointInverse(new Point2D.Double(lowestX, lowestY), true));
+//			points2.add(getPointInverse(new Point2D.Double(lowestX2, lowestY), true));
+			//System.out.println("x1, x2 "+ points2.get(0).getX() + " " + points2.get(1).getX());
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
 				Block c = blocks.get(i);
-				if (c.isInside(points2.get(0).getX(), points2.get(1).getX())){
-					System.out.println("why is "+ points2.get(0).getY());
-					double height = anglez % 180 == 0 ? b.getWidth() : b.getHeight();
-					maxY = c.y - c.getHeight()/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
+				if (c.isInside(points.get(0).getX(), points.get(1).getX())){
+					System.out.println("why is "+ points.get(0).getY());
+					double height = b.onItsSide ? b.getWidth() : b.getHeight();
+					yLoc = c.y - c.getHeight()/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
 					break;
 				}
 			}
 		} else { 
+			
+			double maxY = 0, maxY2 = 0;
+			int index = -1, index2 = -1;
+
+			for (int i = 0; i < points.size(); i++){
+				double currY = points.get(i).getY();
+				if (currY >= maxY){
+					maxY = currY;
+					index = i;
+				}
+			}
+			points.remove(index);
+			for (int i = 0; i < points.size(); i++){
+				double currY = points.get(i).getY();
+				if (currY >= maxY2){
+					maxY2 = currY;
+					index2 = i;
+				}
+			}
+			
 			for (int i = 0; i < blocks.size(); i++){
 				if (blocks.get(i).isInside(points.get(index))){
-					maxY = blocks.get(i).y;
+					yLoc = blocks.get(i).y;
 					break;
 				}
 			}
 		}
-		if (maxY != -1){
-			System.out.println(maxY);
-			return maxY;
+		if (yLoc != -1){
+			System.out.println(yLoc);
+			return yLoc;
 		} else {
-			double height = anglez % 180 != 0 ? b.getHeight() : b.getWidth();
+			System.out.println("angelz is "+anglez);
+			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
+			double height = norm ? b.getHeight() : b.getWidth();
 			return 530 - height/2;
 		}
 	}
@@ -265,23 +261,27 @@ public class Magnet extends Drawable {
 		Block b = blocks.get(currBlock);
 		System.out.println("B coords " + b.x + " "+ b.y);
 		
-		Point2D old1, old2;
-		old1 = new Point2D.Double(b.x, b.y-120+30+1);
-		old2 = new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1);
-		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-120+30+1), true);
-		Point2D p4 = getPointInverse(new Point2D.Double(b.x, b.y+b.getHeight()-120+30+1), true);
-		//double angle = getAngle(p1, p4);
-		double angle = Math.atan2(p4.getY()-p1.getY(), p4.getX()-p1.getX());
-		
-		System.out.println("Angle "+Math.toDegrees(angle));
-		
+		double width = b.onItsSide ? b.getWidth() : b.getHeight();
+		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-105+15), true);
+		Point2D p2 = getPointInverse(new Point2D.Double(b.x+width, b.y-105+15), true);
+		//real life angle.
+		double angle = Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
 		boolean angleOkay = checkAngleParallelish(angle);
 		if (angleOkay){
 			angle = roundAngle(angle);
 			System.out.println("Angle rounded "+Math.toDegrees(angle));
 		}
+		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) {
+			blocks.get(currBlock).onItsSide = true;
+		} else {
+			blocks.get(currBlock).onItsSide = false;
+		}
+		System.out.println("Angle "+Math.toDegrees(angle));
+		
+
 		double ry = getNewBlockLoc(currBlock, angleOkay, angle);
 		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
+		
 
 		System.out.print("x, y "+p1.getX()+ ", "+ry);
 		
@@ -290,7 +290,8 @@ public class Magnet extends Drawable {
 		blocks.get(currBlock).x = (int)p1.getX();
 		blocks.get(currBlock).y = (int)ry;
 		blocks.get(currBlock).at.translate(p1.getX(), ry);
-		blocks.get(currBlock).angle = angle; 
+		blocks.get(currBlock).angle = angle;
+		//if (Math.toRadians(angle) == 270)
 		blocks.get(currBlock).at.rotate(angle);
 		blocks.get(currBlock).fillColor = c;
 
@@ -299,7 +300,7 @@ public class Magnet extends Drawable {
 
 	protected void blockInteraction(){
 		if (!hasBlock){
-			checkAttach();
+			attach();
 		} 
 	}
 }
