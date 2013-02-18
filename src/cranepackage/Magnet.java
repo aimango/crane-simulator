@@ -111,9 +111,8 @@ public class Magnet extends Drawable {
 //			double p4x = p4.getX();
 //			double p4y = p4.getY();
 			
-			if (!b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
-				if ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
-					
+			if (p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
+				if (!b.onItsSide && (p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
 					//System.out.println("p2 coord (" + p2x + ", " + p2y + ") p1 coord ("+ p1x + ", " + p1y + ")");
 					hasBlock = true;
 					blocks.get(i).x = 0;
@@ -123,11 +122,7 @@ public class Magnet extends Drawable {
 					blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
 					currBlock = i;
 					break;
-				}
-			}
-			else if (b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
-				if ((p1x < 0 && p2x >= -height/4) || (p1x >= -height/4 && p1x <= 0)){
-					
+				} else if (b.onItsSide && (p1x < 0 && p2x >= -height/4) || (p1x >= -height/4 && p1x <= 0)){
 					//System.out.println("p2 coord (" + p2x + ", " + p2y + ") p1 coord ("+ p1x + ", " + p1y + ")");
 					hasBlock = true;
 					blocks.get(i).x = 0;
@@ -142,6 +137,7 @@ public class Magnet extends Drawable {
 					break;
 				}
 			}
+
 		}
 	}
 
@@ -161,8 +157,7 @@ public class Magnet extends Drawable {
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
-				if (b.onItsSide)
-					System.out.println("On its side");
+
 				Block c = blocks.get(i);
 				if ((!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
 						|| (b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())))){
@@ -200,7 +195,6 @@ public class Magnet extends Drawable {
 		if (yLoc != 999){
 			return yLoc;
 		} else if (!angleOkay){
-			//b.velocity = 10;
 			return mid.getY()+105-30;
 		} else {
 			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
@@ -234,6 +228,8 @@ public class Magnet extends Drawable {
 			blocks.get(currBlock).origX = (int)p1.getX();
 			blocks.get(currBlock).origY = (int)ry;
 		}
+		
+		// set new properties for the dropped block.
 		blocks.get(currBlock).parent = null;
 		blocks.get(currBlock).at = new AffineTransform();
 		blocks.get(currBlock).x = (int)p1.getX();
