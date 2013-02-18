@@ -138,7 +138,7 @@ public class DirectManip extends JPanel {
 		}
 		
 		if (m.getOn()){
-			m.blockInteraction();
+			m.attach();
 		}
 	}
 }

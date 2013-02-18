@@ -83,6 +83,8 @@ public class Magnet extends Drawable {
 	}
 
 	protected void attach(){
+		if (hasBlock)
+			return;
 		for (int i = 0; i < blocks.size(); i++){
 			Block b = blocks.get(i);
 			double x = b.x;
@@ -141,6 +143,7 @@ public class Magnet extends Drawable {
 		}
 	}
 
+
 	private double getNewYLocation(int currBlock, boolean angleOkay, double anglez){
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
@@ -178,23 +181,21 @@ public class Magnet extends Drawable {
 					index = i;
 				}
 			}
-//			int indexBefore = (index-1)%3;
-//			int indexAfter = (index+1)%3;
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
 				Block c = blocks.get(i);
 				if (c.isInside(points.get(index))){
-					yLoc = blocks.get(i).y;
+					yLoc = c.y;
 					break;
 				}
 			}
 		}
 
-		Point2D mid = getPointInverse(new Point2D.Double(b.x, b.y),true);
 		if (yLoc != 999){
 			return yLoc;
 		} else if (!angleOkay){
+			Point2D mid = getPointInverse(new Point2D.Double(b.x, b.y),true);
 			return mid.getY()+105-30;
 		} else {
 			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
@@ -240,11 +241,5 @@ public class Magnet extends Drawable {
 		blocks.get(currBlock).fillColor = c;
 
 		hasBlock = false; 
-	}
-
-	protected void blockInteraction(){
-		if (!hasBlock){
-			attach();
-		} 
 	}
 }
