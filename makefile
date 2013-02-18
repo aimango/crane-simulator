@@ -1,15 +1,9 @@
-JFLAGS = -g
-JC = javac
-.SUFFIXES: .java .class
-.java.class:
-		$(JC) $(JFLAGS) $*.java
-
-CLASSES = CLASSES = DirectManip.java Drawable.java  Tractor.java  Magnet.java  CraneArm.java Block.java
-
-
-default: classes
-
-classes: $(CLASSES:.java=.class)
+default:
+		javac ./cranepackage/DirectManip.java
+		java cranepackage/DirectManip
+run:
+		javac ./cranepackage/DirectManip.java
+		java cranepackage/DirectManip
 
 clean:
-		$(RM) *.class
+		$(RM) cranepackage/*.class
