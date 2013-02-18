@@ -30,8 +30,9 @@ public class CraneArm extends Drawable {
 		g2.setStroke(new BasicStroke(2));
 		g2.setColor(Color.black);
 		g2.draw(rect);
+		
 		g2.setColor(Color.darkGray);
-		g2.fillOval(-12, -20, 16, 16);
+		g2.fillOval(-10, -20, 16, 16);
 		g2.setTransform(aiCurr); // set to
 	}
 	

@@ -57,7 +57,7 @@ public class Magnet extends Drawable {
 				this.fillColor =  new Color(172, 0, 230);
 			}
 			String s = turnedOn ? "ON" : "OFF";
-			System.out.println("Turning " + s);
+			System.out.println("Turning magnet " + s);
 			return true;
 		} else {
 			return false;
@@ -77,7 +77,7 @@ public class Magnet extends Drawable {
 		g2.fill(rect);
 		g2.setColor(Color.black);
 		g2.draw(rect);
-		g2.fillOval(0, 0, 10, 10);
+		g2.fillOval(-10, -5, 10, 10);
 		g2.setTransform(aiCurr); // set to	
 	}
 
@@ -144,7 +144,7 @@ public class Magnet extends Drawable {
 		}
 	}
 
-	private double getNewBlockLoc(int currBlock, boolean angleOkay, double anglez){
+	private double getNewYLocation(int currBlock, boolean angleOkay, double anglez){
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 	
@@ -167,11 +167,8 @@ public class Magnet extends Drawable {
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
+				
 				Block c = blocks.get(i);
-//				if (b.onItsSide)
-//					System.out.println("Yes on its side");
-//				else
-//					System.out.println("No not on its side");
 				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
 						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
 					System.out.println("y is "+ points.get(0).getY());
@@ -192,15 +189,14 @@ public class Magnet extends Drawable {
 					index = i;
 				}
 			}
-			int indexBefore = (index-1)%3;
-			int indexAfter = (index+1)%3;
+//			int indexBefore = (index-1)%3;
+//			int indexAfter = (index+1)%3;
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
 				Block c = blocks.get(i);
 				if (c.isInside(points.get(index))){
-
-	        		System.out.println("This index "+i);
+	        		//System.out.println("This index "+i);
 					yLoc = blocks.get(i).y;
 					break;
 				}
@@ -215,7 +211,7 @@ public class Magnet extends Drawable {
 		} else {
 			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
 			double height = norm ? b.getHeight() : b.getWidth();
-			return 530 - height/2;
+			return 550 - height/2;
 		}
 	}
 	
@@ -229,20 +225,21 @@ public class Magnet extends Drawable {
 		//real life angle.
 		double angle = Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
 		boolean angleOkay = checkAngleParallelish(angle);
-		if (angleOkay){
+		if (angleOkay){ // if the angle offset is < 5 degrees, round it to the nearest parallel angle.
 			angle = roundAngle(angle);
 			System.out.println("Angle rounded to "+Math.toDegrees(angle));
 		}
-		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) {
+		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) { // toggle the boolean
 			blocks.get(currBlock).onItsSide = !blocks.get(currBlock).onItsSide;
-		} 
-		//System.out.println("Angle "+Math.toDegrees(angle));
+		}
 		
-		double ry = getNewBlockLoc(currBlock, angleOkay, angle);
-		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
+		double ry = getNewYLocation(currBlock, angleOkay, angle);
+		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray; 
 		
-		//System.out.print("x, y "+p1.getX()+ ", "+ry);
-		
+		if (angleOkay){ // update the coords to "undo" to
+			blocks.get(currBlock).origX = (int)p1.getX();
+			blocks.get(currBlock).origY = (int)ry;
+		}
 		blocks.get(currBlock).parent = null;
 		blocks.get(currBlock).at = new AffineTransform();
 		blocks.get(currBlock).x = (int)p1.getX();

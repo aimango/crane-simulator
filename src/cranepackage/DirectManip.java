@@ -1,7 +1,6 @@
 /**
  * Elisa Lou 20372456.
  * Assignment 2 - Direct Manipulation.
- * Took some example code from RotateTriangle
  */
 package cranepackage;
 
@@ -23,14 +22,15 @@ import javax.swing.Timer;
 public class DirectManip extends JPanel {
 	
 	private static final long serialVersionUID = 1L; // get rid of warning
-	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private Timer t, tClear;
-
-	private Magnet m;
 	private int fps = 40;
+	
+	private Magnet m;
+	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private int clickedIndex;
 	private boolean dragging = false;
-
+	private Color pink = new Color (255, 97, 215);
+	
 	public DirectManip() {
 		super();
 		ActionListener repainter = new ActionListener() {
@@ -43,15 +43,11 @@ public class DirectManip extends JPanel {
 
 		ActionListener clear = new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-//				if (fillColor == Color.gray){
-//					y += 10;
-//				}
 				// my way of "destroying" my blocks
 				for (int i = 0; i < m.blocks.size(); i++){
 					final Block b = m.blocks.get(i);
 					if (b.fillColor == Color.gray){
-						Color c =  new Color (255, 97, 215);
-						m.blocks.add(new Block(b.origX, b.origY, b.height, b.width, 0, null, c));
+						m.blocks.add(new Block(b.origX, b.origY, b.height, b.width, 0, null, pink));
 						m.blocks.remove(i);
 					}
 				}
@@ -60,13 +56,13 @@ public class DirectManip extends JPanel {
 		tClear = new Timer(20000/fps, clear);
 		tClear.start();
 		
-		Color c = new Color(172, 0, 230);
-		Tractor tractor = new Tractor(50, 500, 0, null, c);
-		CraneArm kevin = new CraneArm(100, -130, Math.toRadians(180), tractor, c);
-		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, c);
-		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, c);
-		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, c);
-		m = new Magnet(0, 125, 0, dan, c);
+		Color purple = new Color(172, 0, 230);
+		Tractor tractor = new Tractor(50, 500, 0, null, purple);
+		CraneArm kevin = new CraneArm(100, -130, Math.toRadians(180), tractor, purple);
+		CraneArm bob = new CraneArm(0, 120, Math.toRadians(40), kevin, purple);
+		CraneArm jon = new CraneArm(0, 120, Math.toRadians(40), bob, purple);
+		CraneArm dan = new CraneArm(0, 120, Math.toRadians(40), jon, purple);
+		m = new Magnet(0, 125, 0, dan, purple);
 
 		craneParts.add(tractor);
 		craneParts.add(kevin);
@@ -74,13 +70,12 @@ public class DirectManip extends JPanel {
 		craneParts.add(jon);
 		craneParts.add(dan);
 		craneParts.add(m);		
-		
-		c = new Color (255, 97, 215);
-		m.blocks.add(new Block(500, 520, 50, 100, 0, null, c));
-		m.blocks.add(new Block(620, 500, 100, 120, 0, null, c));
-		m.blocks.add(new Block(500, 450, 90, 60, 0, null, c));
-		m.blocks.add(new Block(600, 410, 80, 40, 0, null, c));
-		m.blocks.add(new Block(660, 390, 120, 30, 0, null, c));
+	
+		m.blocks.add(new Block(500, 520, 50, 100, 0, null, pink));
+		m.blocks.add(new Block(620, 500, 100, 120, 0, null, pink));
+		m.blocks.add(new Block(500, 450, 90, 60, 0, null, pink));
+		m.blocks.add(new Block(600, 410, 80, 40, 0, null, pink));
+		m.blocks.add(new Block(660, 390, 120, 30, 0, null, pink));
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {				
@@ -128,7 +123,6 @@ public class DirectManip extends JPanel {
 
 		for (int i = 0; i < m.blocks.size(); i++){
 			final Block b = m.blocks.get(i);
-			//b.translate(0,10);
 			b.paintComponent(g);
 		}
 		for (int i = 0; i < craneParts.size(); i++){
