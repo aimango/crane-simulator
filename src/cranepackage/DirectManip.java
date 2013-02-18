@@ -31,9 +31,9 @@ public class DirectManip extends JPanel {
 	private boolean dragging = false;
 	private Color pink = new Color (255, 97, 215);
 	
-	public DirectManip() {
+	public DirectManip(){
 		super();
-		ActionListener repainter = new ActionListener() {
+		ActionListener repainter = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				repaint();
 			}
@@ -41,7 +41,7 @@ public class DirectManip extends JPanel {
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-		ActionListener clear = new ActionListener() {
+		ActionListener clear = new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				// my way of "destroying" my blocks
 				for (int i = 0; i < m.blocks.size(); i++){
@@ -77,26 +77,26 @@ public class DirectManip extends JPanel {
 		m.blocks.add(new Block(600, 410, 80, 40, 0, null, pink));
 		m.blocks.add(new Block(660, 390, 120, 30, 0, null, pink));
 		
-		this.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {				
+		this.addMouseListener(new MouseAdapter(){
+			public void mousePressed(MouseEvent e){				
 		        Point2D p = e.getPoint();
 
-		        for (int i = craneParts.size() - 1; i >= 0; i--) {
-		        	if (craneParts.get(i).isInside(p) ) {
+		        for (int i = craneParts.size() - 1; i >= 0; i--){
+		        	if (craneParts.get(i).isInside(p) ){
 		        		dragging = true;
 		        		clickedIndex = i;
 		        		break;
 		        	}
 		        }
 			}
-		    public void mouseReleased(MouseEvent e) {
+		    public void mouseReleased(MouseEvent e){
 		        dragging = false;
 		    }
 		});
 
-		this.addMouseMotionListener(new MouseMotionAdapter() {
-			public void mouseDragged(MouseEvent e) {
-				if (dragging) {
+		this.addMouseMotionListener(new MouseMotionAdapter(){
+			public void mouseDragged(MouseEvent e){
+				if (dragging){
 					Point2D current = e.getPoint();
 					craneParts.get(clickedIndex).moveItem(current);
 				}
@@ -104,7 +104,7 @@ public class DirectManip extends JPanel {
 		});
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		DirectManip canvas = new DirectManip();
 		JFrame f = new JFrame("A02 - Direct Manipulation");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -114,7 +114,7 @@ public class DirectManip extends JPanel {
 		f.setVisible(true);
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g){
 		g.clearRect(0,0,800,600); // clear the window before redraws..
 		g.setColor(new Color(46,138,92));
 		g.fillRect(0, 530, 800, 50); // grass 
@@ -131,7 +131,7 @@ public class DirectManip extends JPanel {
 		}
 		for (int i = 0; i < m.blocks.size(); i++){
 			final Block b = m.blocks.get(i);
-			if (b.parent != null) {// paint held blocks in front of non held blocks.
+			if (b.parent != null){// paint held blocks in front of non held blocks.
 				b.paintComponent(g);
 				break;
 			}

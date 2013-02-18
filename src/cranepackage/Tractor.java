@@ -17,7 +17,7 @@ public class Tractor extends Drawable {
 		super(x,y,angle,parent,fill);
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g){
 		
 		// http://docs.oracle.com/javase/tutorial/2d/geometry/strokeandfill.html
 		final float dash1[] = {12.0f};
@@ -54,7 +54,7 @@ public class Tractor extends Drawable {
 	}
 
 	//TODO: dont allow moving in the triangular parts..
-	protected boolean isInside(Point2D p) {
+	protected boolean isInside(Point2D p){
 		if (p.getX() > x - 10 && p.getX() < x+210 && p.getY() > y && p.getY() < y+40 ||
 				p.getX() >= x && p.getX() < x+200 && p.getY() >= y-100 && p.getY() < y){ // bounds check
 			xBegin = p.getX();
@@ -64,7 +64,7 @@ public class Tractor extends Drawable {
 		}
 	}
 
-	protected void moveItem(Point2D p) {
+	protected void moveItem(Point2D p){
 		int delta = (int) (p.getX()-xBegin);
 		at.translate(delta, 0);
 		xBegin = p.getX();

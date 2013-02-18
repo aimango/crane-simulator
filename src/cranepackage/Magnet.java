@@ -12,11 +12,12 @@ import java.util.ArrayList;
 public class Magnet extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
+	public boolean turnedOn = false;
+	private boolean hasBlock = false;
+	private int currBlock;
+	
 	private Rectangle rect;
 	public ArrayList<Block> blocks = new ArrayList<Block>();
-	private boolean hasBlock = false;
-	public boolean turnedOn = false;
-	private int currBlock;
 	
 	public Magnet(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
@@ -43,7 +44,7 @@ public class Magnet extends Drawable {
 		return angle;
 	}
 
-	protected boolean isInside(Point2D p) {
+	protected boolean isInside(Point2D p){
 		p = getPointInverse(p, false);
 		if (p.getX() > -40 && p.getX() < 40 && p.getY() > -15 && p.getY() < 15){
 			if (turnedOn && hasBlock){
@@ -68,7 +69,7 @@ public class Magnet extends Drawable {
 		return turnedOn;
 	}
 
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		
@@ -89,26 +90,26 @@ public class Magnet extends Drawable {
 			int width = b.getWidth();
 			int height = b.getHeight();
 			
-			Point2D p1, p2, p3, p4;
+			Point2D p1, p2; // p3, p4;
 			if (!b.onItsSide){
 				p1 = getPointInverse(new Point2D.Double(x-width/2, y-height/2), false);
 				p2 = getPointInverse(new Point2D.Double(x+width/2, y-height/2), false);
-				p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
-				p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
+//				p3 = getPointInverse(new Point2D.Double(x+width/2, y+height/2), false);
+//				p4 = getPointInverse(new Point2D.Double(x-width/2, y+height/2), false);
 			} else {
 				p1 = getPointInverse(new Point2D.Double(x-height/2, y-width/2), false);
 				p2 = getPointInverse(new Point2D.Double(x+height/2, y-width/2), false);
-				p3 = getPointInverse(new Point2D.Double(x+height/2, y+width/2), false);
-				p4 = getPointInverse(new Point2D.Double(x-height/2, y+width/2), false);
+//				p3 = getPointInverse(new Point2D.Double(x+height/2, y+width/2), false);
+//				p4 = getPointInverse(new Point2D.Double(x-height/2, y+width/2), false);
 			}
 			double p1x = p1.getX();
 			double p1y = p1.getY();
 			double p2x = p2.getX();
 			double p2y = p2.getY();
-			double p3x = p3.getX();
-			double p3y = p3.getY();
-			double p4x = p4.getX();
-			double p4y = p4.getY();
+//			double p3x = p3.getX();
+//			double p3y = p3.getY();
+//			double p4x = p4.getX();
+//			double p4y = p4.getY();
 			
 			if (!b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
 				if ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
@@ -159,9 +160,8 @@ public class Magnet extends Drawable {
 			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 		}
-		Point2D mid = getPointInverse(new Point2D.Double(b.x,b.y),true);
 		double yLoc = 999;
-		if (angleOkay) {
+		if (angleOkay){
 			anglez = Math.toDegrees(anglez);
 
 			for (int i = 0; i < blocks.size(); i++){
@@ -196,13 +196,13 @@ public class Magnet extends Drawable {
 					continue;
 				Block c = blocks.get(i);
 				if (c.isInside(points.get(index))){
-	        		//System.out.println("This index "+i);
 					yLoc = blocks.get(i).y;
 					break;
 				}
 			}
 		}
-		
+
+		Point2D mid = getPointInverse(new Point2D.Double(b.x, b.y),true);
 		if (yLoc != 999){
 			return yLoc;
 		} else if (!angleOkay){
@@ -229,7 +229,7 @@ public class Magnet extends Drawable {
 			angle = roundAngle(angle);
 			System.out.println("Angle rounded to "+Math.toDegrees(angle));
 		}
-		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) { // toggle the boolean
+		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90){ // toggle the boolean
 			blocks.get(currBlock).onItsSide = !blocks.get(currBlock).onItsSide;
 		}
 		

@@ -26,9 +26,9 @@ public class Drawable extends JComponent {
 		this.fillColor = fill;
 	}
 
-	public void paintComponent(Graphics g) {}
+	public void paintComponent(Graphics g){}
 	
-	protected AffineTransform getTransform() {
+	protected AffineTransform getTransform(){
 		AffineTransform atParent;
 		if (parent != null){
 			atParent = new AffineTransform(parent.getTransform()); // recursive
@@ -39,13 +39,12 @@ public class Drawable extends JComponent {
 		return atParent;
 	}
 	
-	protected Point2D getPointInverse(Point2D p, boolean realWorld) {
+	protected Point2D getPointInverse(Point2D p, boolean realWorld){
 		AffineTransform temp = new AffineTransform(this.getTransform()); // copy cxr
 		if (!realWorld){
 			try {
 				temp = temp.createInverse();
-			} catch (NoninvertibleTransformException e) {
-				// TODO Auto-generated catch block
+			} catch (NoninvertibleTransformException e){
 				e.printStackTrace();
 			}
 		}
@@ -54,17 +53,11 @@ public class Drawable extends JComponent {
 		return d;
 	}
 
-	protected void getAngleUpdated(double angle, boolean realWorld){
-		AffineTransform temp = new AffineTransform(this.getTransform());
-		temp.rotate(angle);
-		at=temp;
-	}
-	
-	protected boolean isInside(Point2D p) {
+	protected boolean isInside(Point2D p){
 		return false;
 	}
 
-	protected void moveItem(Point2D p) {}
+	protected void moveItem(Point2D p){}
 	
 
 }

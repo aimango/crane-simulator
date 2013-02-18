@@ -12,12 +12,14 @@ import java.awt.geom.Point2D;
 public class Block extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
-	private Rectangle rect;
 	protected int height, width;
 	protected double angle;
+	
 	protected boolean onItsSide;
 	protected int origX, origY;
-	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
+	private Rectangle rect;
+	
+	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill){
 		super(x, y, angle, parent, fill);
 		origX = x;
 		origY = y;
@@ -28,14 +30,14 @@ public class Block extends Drawable {
 		this.onItsSide = false;
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		AffineTransform aiCurr = g2.getTransform(); // to recover at the end
 		
 		g2.transform(getTransform()); // offset
 		g2.setStroke(new BasicStroke(2));
 		g2.setColor(fillColor);
-		if (parent != null) { // means it's attached to the magnet!
+		if (parent != null){ // means it's attached to the magnet!
 			g2.translate(0, -90);
 		} 
 
@@ -46,7 +48,7 @@ public class Block extends Drawable {
 		g2.setTransform(aiCurr); // set to
 	}
 
-	protected boolean isInside(Point2D p1) {
+	protected boolean isInside(Point2D p1){
 		if (p1.getX() > x-width/2 && p1.getX() < x+width/2){ // bounds check
 			return true;
 		} else {
@@ -54,8 +56,7 @@ public class Block extends Drawable {
 		}
 	}
 	
-	protected boolean isInside(double x1, double x2) {
-		//System.out.println("x1, x2 " + x1 + " " + x2);
+	protected boolean isInside(double x1, double x2){
 		if ( (x1 < x-width/2 && x2 > x-width/2) || (x1 > x-width/2 && x1 < x+width/2)){ 
 			return true;
 		} else {
