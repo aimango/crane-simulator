@@ -8,11 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-//TODO:
-//Figure out block angle & falling & placing.
-//Do automatic EM detection - while(true) loop?
-//Then, do crayyyyy stuff with collision detection.
-
 public class Magnet extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
@@ -73,10 +68,11 @@ public class Magnet extends Drawable {
 				releaseBlock();
 			}
 			turnedOn = !turnedOn;
-			if (turnedOn)
+			if (turnedOn){
 				this.fillColor = new Color(200, 36, 255);
-			else
+			} else {
 				this.fillColor =  new Color(172, 0, 230);
+			}
 			String s = turnedOn ? "ON" : "OFF";
 			System.out.println("Turning " + s);
 			return true;
@@ -130,7 +126,7 @@ public class Magnet extends Drawable {
 			double p3y = p3.getY();
 			double p4x = p4.getX();
 			double p4y = p4.getY();
-
+			
 			if (!b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
 				if ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
 					
@@ -154,11 +150,14 @@ public class Magnet extends Drawable {
 							") p1 coord ("+ p1x + ", " + p1y + ")");
 					hasBlock = true;
 					blocks.get(i).x = 0;
-					blocks.get(i).y = 105+width/2; 
+					blocks.get(i).y = 105+height/2; 
 		
 					blocks.get(i).parent = this;
 					blocks.get(i).at = new AffineTransform();
-					blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
+					
+					double xTranslate = Math.toDegrees(b.angle) == 90 ? -width/2-40 : width/2+40;
+					blocks.get(i).at.translate(xTranslate, 105-height/2-15); // hackz
+					blocks.get(i).at.rotate(b.angle);
 					currBlock = i;
 					break;
 				}
@@ -169,12 +168,6 @@ public class Magnet extends Drawable {
 	private double getNewBlockLoc(int currBlock, boolean angleOkay, double anglez){
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
-		ArrayList<Point2D> points2 = new ArrayList<Point2D>();
-
-//		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y), true);
-//		Point2D p2 = getPointInverse(new Point2D.Double(b.x+width, b.y), true);
-//		//real life angle.
-//		double angle = Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
 //		
 		if (!b.onItsSide){
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-105), true));
@@ -188,24 +181,10 @@ public class Magnet extends Drawable {
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 		}
 
-		//System.out.println("maxY, maxY2 "+ maxY+ " " + maxY2);
 		double yLoc = -1;
-
 		if (angleOkay) {
-//			double lowestX, lowestX2, lowestY;
 			anglez = Math.toDegrees(anglez);
-//			if (anglez % 180 == 0) {
-//				lowestX = b.x-b.getWidth()/2;
-//				lowestX2 = b.x+b.getWidth()/2;
-//				lowestY = b.y-b.getHeight()/2;
-//			} else{
-//				lowestX = b.x-b.getHeight()/2;
-//				lowestX2 = b.x+b.getHeight()/2;
-//				lowestY = b.y-b.getWidth()/2;
-//			}
-//
-//			points2.add(getPointInverse(new Point2D.Double(lowestX, lowestY), true));
-//			points2.add(getPointInverse(new Point2D.Double(lowestX2, lowestY), true));
+
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
@@ -213,40 +192,33 @@ public class Magnet extends Drawable {
 				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
 						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
 					System.out.println("why is "+ points.get(0).getY());
-					double height = b.onItsSide ? b.getWidth() : b.getHeight();
-					double cheight = c.onItsSide ? c.getWidth() : c.getHeight();
-					yLoc = c.y - cheight/2 - height/2;//- c.getHeight(); // cant subtract by height if falls at rotated loc..
+					double bHeight = b.onItsSide ? b.getWidth() : b.getHeight();
+					double cHeight = c.onItsSide ? c.getWidth() : c.getHeight();
+					yLoc = c.y - cHeight/2 - bHeight/2;
+//					if (b.onItsSide)
+//						yLoc -= bHeight/2;
 					break;
 				}
 			}
 		} else { 
-			
-			double maxY = 0, maxY2 = 0;
-			int index = -1, index2 = -1;
-
+			double maxY = 0;
+			int index = -1;
 			for (int i = 0; i < points.size(); i++){
 				double currY = points.get(i).getY();
-				if (currY >= maxY){
+				if (currY > maxY){
 					maxY = currY;
 					index = i;
 				}
 			}
-			points.remove(index);
-			for (int i = 0; i < points.size(); i++){
-				double currY = points.get(i).getY();
-				if (currY >= maxY2){
-					maxY2 = currY;
-					index2 = i;
-				}
-			}
-			
 			for (int i = 0; i < blocks.size(); i++){
-				if (blocks.get(i).isInside(points.get(index))){
+				Block c = blocks.get(i);
+				if (c.isInside(points.get(index))){
 					yLoc = blocks.get(i).y;
 					break;
 				}
 			}
 		}
+		
 		if (yLoc != -1){
 			System.out.println(yLoc);
 			return yLoc;
@@ -265,6 +237,7 @@ public class Magnet extends Drawable {
 		double width = b.onItsSide ? b.getWidth() : b.getHeight();
 		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-105+15), true);
 		Point2D p2 = getPointInverse(new Point2D.Double(b.x+width, b.y-105+15), true);
+		
 		//real life angle.
 		double angle = Math.atan2(p2.getY()-p1.getY(), p2.getX()-p1.getX());
 		boolean angleOkay = checkAngleParallelish(angle);
@@ -273,17 +246,13 @@ public class Magnet extends Drawable {
 			System.out.println("Angle rounded "+Math.toDegrees(angle));
 		}
 		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) {
-			blocks.get(currBlock).onItsSide = true;
-		} else {
-			blocks.get(currBlock).onItsSide = false;
-		}
+			blocks.get(currBlock).onItsSide = !blocks.get(currBlock).onItsSide;
+		} 
 		System.out.println("Angle "+Math.toDegrees(angle));
 		
-
 		double ry = getNewBlockLoc(currBlock, angleOkay, angle);
 		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
 		
-
 		System.out.print("x, y "+p1.getX()+ ", "+ry);
 		
 		blocks.get(currBlock).parent = null;
@@ -291,9 +260,8 @@ public class Magnet extends Drawable {
 		blocks.get(currBlock).x = (int)p1.getX();
 		blocks.get(currBlock).y = (int)ry;
 		blocks.get(currBlock).at.translate(p1.getX(), ry);
-		blocks.get(currBlock).angle = angle;
-		//if (Math.toRadians(angle) == 270)
-		blocks.get(currBlock).at.rotate(angle);
+		blocks.get(currBlock).angle += angle;
+		blocks.get(currBlock).at.rotate(blocks.get(currBlock).angle);
 		blocks.get(currBlock).fillColor = c;
 
 		hasBlock = false; 
