@@ -149,17 +149,11 @@ public class Magnet extends Drawable {
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
 	
-		if (!b.onItsSide){
-			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-105), true));
-		} else {
-			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y-b.getWidth()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y-b.getWidth()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y+b.getWidth()/2-105), true));
-			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
-		}
+		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-105), true));
+		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-105), true));
+		points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y+b.getHeight()/2-105), true));
+		points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y+b.getHeight()/2-105), true));
+
 		double yLoc = 999;
 		if (angleOkay){
 			anglez = Math.toDegrees(anglez);
@@ -167,11 +161,11 @@ public class Magnet extends Drawable {
 			for (int i = 0; i < blocks.size(); i++){
 				if (i == currBlock)
 					continue;
-				
+				if (b.onItsSide)
+					System.out.println("On its side");
 				Block c = blocks.get(i);
-				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
-						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
-					System.out.println("y is "+ points.get(0).getY());
+				if ((!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
+						|| (b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())))){
 					double bHeight = b.onItsSide ? b.getWidth() : b.getHeight();
 					double cHeight = c.onItsSide ? c.getWidth() : c.getHeight();
 					double temp = c.y - cHeight/2 - bHeight/2;

@@ -75,7 +75,7 @@ public class DirectManip extends JPanel {
 		m.blocks.add(new Block(620, 500, 100, 120, 0, null, pink));
 		m.blocks.add(new Block(500, 450, 90, 60, 0, null, pink));
 		m.blocks.add(new Block(600, 410, 80, 40, 0, null, pink));
-		m.blocks.add(new Block(660, 390, 120, 30, 0, null, pink));
+		m.blocks.add(new Block(660, 390, 120, 40, 0, null, pink));
 		
 		this.addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent e){				
