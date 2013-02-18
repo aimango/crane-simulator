@@ -160,7 +160,7 @@ public class Magnet extends Drawable {
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 		}
 		Point2D mid = getPointInverse(new Point2D.Double(b.x,b.y),true);
-		double yLoc = -1;
+		double yLoc = 999;
 		if (angleOkay) {
 			anglez = Math.toDegrees(anglez);
 
@@ -173,15 +173,13 @@ public class Magnet extends Drawable {
 //				else
 //					System.out.println("No not on its side");
 				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
-						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())
-						|| !b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
+						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
 					System.out.println("y is "+ points.get(0).getY());
 					double bHeight = b.onItsSide ? b.getWidth() : b.getHeight();
 					double cHeight = c.onItsSide ? c.getWidth() : c.getHeight();
-					yLoc = c.y - cHeight/2 - bHeight/2;
-//					if (b.onItsSide)
-//						yLoc -= bHeight/2;
-					break;
+					double temp = c.y - cHeight/2 - bHeight/2;
+					if (temp < yLoc) // search for highest block to fall on.
+						yLoc = temp;
 				}
 			}
 		} else { 
@@ -209,11 +207,10 @@ public class Magnet extends Drawable {
 			}
 		}
 		
-		if (yLoc != -1){
+		if (yLoc != 999){
 			return yLoc;
 		} else if (!angleOkay){
-			b.velocity = 10;
-			//System.out.println("angle not ok " +mid.getY());
+			//b.velocity = 10;
 			return mid.getY()+105-30;
 		} else {
 			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
@@ -224,7 +221,6 @@ public class Magnet extends Drawable {
 	
 	protected void releaseBlock(){
 		Block b = blocks.get(currBlock);
-		//System.out.println("B coords " + b.x + " "+ b.y);
 		
 		double width = b.onItsSide ? b.getWidth() : b.getHeight();
 		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-105+15), true);

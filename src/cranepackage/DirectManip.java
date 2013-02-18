@@ -24,7 +24,7 @@ public class DirectManip extends JPanel {
 	
 	private static final long serialVersionUID = 1L; // get rid of warning
 	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
-	private Timer t;
+	private Timer t, tClear;
 
 	private Magnet m;
 	private int fps = 40;
@@ -38,12 +38,27 @@ public class DirectManip extends JPanel {
 				repaint();
 			}
 		};
-
-		
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-
+		ActionListener clear = new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+//				if (fillColor == Color.gray){
+//					y += 10;
+//				}
+				// my way of "destroying" my blocks
+				for (int i = 0; i < m.blocks.size(); i++){
+					final Block b = m.blocks.get(i);
+					if (b.fillColor == Color.gray){
+						Color c =  new Color (255, 97, 215);
+						m.blocks.add(new Block(b.origX, b.origY, b.height, b.width, 0, null, c));
+						m.blocks.remove(i);
+					}
+				}
+			}
+		};
+		tClear = new Timer(20000/fps, clear);
+		tClear.start();
 		
 		Color c = new Color(172, 0, 230);
 		Tractor tractor = new Tractor(50, 500, 0, null, c);
@@ -116,15 +131,16 @@ public class DirectManip extends JPanel {
 			//b.translate(0,10);
 			b.paintComponent(g);
 		}
-		
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);
 		}
 		for (int i = 0; i < m.blocks.size(); i++){
 			final Block b = m.blocks.get(i);
-			if (b.parent != null) // paint held blocks in front of non held blocks.
+			if (b.parent != null) {// paint held blocks in front of non held blocks.
 				b.paintComponent(g);
+				break;
+			}
 		}
 		
 		if (m.getOn()){
