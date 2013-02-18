@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+
 public class Magnet extends Drawable {
 
 	private static final long serialVersionUID = 1L;  // get rid of warning
@@ -20,24 +21,6 @@ public class Magnet extends Drawable {
 	public Magnet(int x, int y, double angle, Drawable parent, Color fill){
 		super(x,y,angle,parent,fill);
 		rect = new Rectangle(-40,-15,80,30);
-	}
-	
-	private double getAngle(Point2D origin, Point2D other) {
-	    double dy = other.getY() - origin.getY();
-	    double dx = other.getX() - origin.getX();
-	    double angle;
-	    double PI = Math.PI;
-	    if (dx == 0) // special case
-	        angle = dy >= 0? PI/2: -PI/2;
-	    else {
-	        angle = Math.atan(dy/dx);
-	        if (dx < 0) // hemisphere correction
-	            angle += PI;
-	    }
-	    // all between 0 and 2PI
-	    if (angle < 0) // between -PI/2 and 0
-	        angle += 2*PI;
-	    return angle;
 	}
 	
 	//	check if it's parallel to the ground +/-5 degrees
@@ -64,7 +47,7 @@ public class Magnet extends Drawable {
 		p = getPointInverse(p, false);
 		if (p.getX() > -40 && p.getX() < 40 && p.getY() > -15 && p.getY() < 15){
 			if (turnedOn && hasBlock){
-				System.out.println("HAS BLOCK. RELEASE");
+				System.out.println("Releasing block.");
 				releaseBlock();
 			}
 			turnedOn = !turnedOn;
@@ -130,12 +113,10 @@ public class Magnet extends Drawable {
 			if (!b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
 				if ((p1x < 0 && p2x >= -width/4) || (p1x >= -width/4 && p1x <= 0)){
 					
-					System.out.println("attach\np2 coord (" + p2x + ", " + p2y + 
-							") p1 coord ("+ p1x + ", " + p1y + ")");
+					//System.out.println("p2 coord (" + p2x + ", " + p2y + ") p1 coord ("+ p1x + ", " + p1y + ")");
 					hasBlock = true;
 					blocks.get(i).x = 0;
 					blocks.get(i).y = 105+height/2;
-		
 					blocks.get(i).parent = this;
 					blocks.get(i).at = new AffineTransform();
 					blocks.get(i).at.translate(blocks.get(i).x, blocks.get(i).y); // hackz
@@ -146,12 +127,10 @@ public class Magnet extends Drawable {
 			else if (b.onItsSide && p2y >= 15 && p2y <= 25 && p1y >= 15 && p1y <= 25){
 				if ((p1x < 0 && p2x >= -height/4) || (p1x >= -height/4 && p1x <= 0)){
 					
-					System.out.println("attach\np2 coord (" + p2x + ", " + p2y + 
-							") p1 coord ("+ p1x + ", " + p1y + ")");
+					//System.out.println("p2 coord (" + p2x + ", " + p2y + ") p1 coord ("+ p1x + ", " + p1y + ")");
 					hasBlock = true;
 					blocks.get(i).x = 0;
 					blocks.get(i).y = 105+height/2; 
-		
 					blocks.get(i).parent = this;
 					blocks.get(i).at = new AffineTransform();
 					
@@ -168,7 +147,7 @@ public class Magnet extends Drawable {
 	private double getNewBlockLoc(int currBlock, boolean angleOkay, double anglez){
 		Block b = blocks.get(currBlock);
 		ArrayList<Point2D> points = new ArrayList<Point2D>();
-//		
+	
 		if (!b.onItsSide){
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getWidth()/2, b.y-b.getHeight()/2-105), true));
 			points.add( getPointInverse(new Point2D.Double(b.x+b.getWidth()/2, b.y-b.getHeight()/2-105), true));
@@ -180,7 +159,7 @@ public class Magnet extends Drawable {
 			points.add( getPointInverse(new Point2D.Double(b.x+b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 			points.add( getPointInverse(new Point2D.Double(b.x-b.getHeight()/2, b.y+b.getWidth()/2-105), true));
 		}
-
+		Point2D mid = getPointInverse(new Point2D.Double(b.x,b.y),true);
 		double yLoc = -1;
 		if (angleOkay) {
 			anglez = Math.toDegrees(anglez);
@@ -189,9 +168,14 @@ public class Magnet extends Drawable {
 				if (i == currBlock)
 					continue;
 				Block c = blocks.get(i);
+//				if (b.onItsSide)
+//					System.out.println("Yes on its side");
+//				else
+//					System.out.println("No not on its side");
 				if (!b.onItsSide && c.isInside(points.get(0).getX(), points.get(1).getX())
-						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
-					System.out.println("why is "+ points.get(0).getY());
+						|| b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())
+						|| !b.onItsSide && c.isInside(points.get(0).getX(), points.get(3).getX())){
+					System.out.println("y is "+ points.get(0).getY());
 					double bHeight = b.onItsSide ? b.getWidth() : b.getHeight();
 					double cHeight = c.onItsSide ? c.getWidth() : c.getHeight();
 					yLoc = c.y - cHeight/2 - bHeight/2;
@@ -210,9 +194,15 @@ public class Magnet extends Drawable {
 					index = i;
 				}
 			}
+			int indexBefore = (index-1)%3;
+			int indexAfter = (index+1)%3;
 			for (int i = 0; i < blocks.size(); i++){
+				if (i == currBlock)
+					continue;
 				Block c = blocks.get(i);
 				if (c.isInside(points.get(index))){
+
+	        		System.out.println("This index "+i);
 					yLoc = blocks.get(i).y;
 					break;
 				}
@@ -220,10 +210,12 @@ public class Magnet extends Drawable {
 		}
 		
 		if (yLoc != -1){
-			System.out.println(yLoc);
 			return yLoc;
+		} else if (!angleOkay){
+			b.velocity = 10;
+			//System.out.println("angle not ok " +mid.getY());
+			return mid.getY()+105-30;
 		} else {
-			System.out.println("angelz is "+anglez);
 			boolean norm = (anglez == 90 || anglez == -90) ? false : true;
 			double height = norm ? b.getHeight() : b.getWidth();
 			return 530 - height/2;
@@ -232,7 +224,7 @@ public class Magnet extends Drawable {
 	
 	protected void releaseBlock(){
 		Block b = blocks.get(currBlock);
-		System.out.println("B coords " + b.x + " "+ b.y);
+		//System.out.println("B coords " + b.x + " "+ b.y);
 		
 		double width = b.onItsSide ? b.getWidth() : b.getHeight();
 		Point2D p1 = getPointInverse(new Point2D.Double(b.x, b.y-105+15), true);
@@ -243,17 +235,17 @@ public class Magnet extends Drawable {
 		boolean angleOkay = checkAngleParallelish(angle);
 		if (angleOkay){
 			angle = roundAngle(angle);
-			System.out.println("Angle rounded "+Math.toDegrees(angle));
+			System.out.println("Angle rounded to "+Math.toDegrees(angle));
 		}
 		if (Math.toDegrees(angle) == 90 || Math.toDegrees(angle) == -90) {
 			blocks.get(currBlock).onItsSide = !blocks.get(currBlock).onItsSide;
 		} 
-		System.out.println("Angle "+Math.toDegrees(angle));
+		//System.out.println("Angle "+Math.toDegrees(angle));
 		
 		double ry = getNewBlockLoc(currBlock, angleOkay, angle);
 		Color c = angleOkay ? new Color (255, 97, 215) : Color.gray;
 		
-		System.out.print("x, y "+p1.getX()+ ", "+ry);
+		//System.out.print("x, y "+p1.getX()+ ", "+ry);
 		
 		blocks.get(currBlock).parent = null;
 		blocks.get(currBlock).at = new AffineTransform();

@@ -25,7 +25,7 @@ public class DirectManip extends JPanel {
 	private static final long serialVersionUID = 1L; // get rid of warning
 	private ArrayList<Drawable> craneParts = new ArrayList<Drawable>();
 	private Timer t;
-	private Timer tClear; // timer for deleting objects
+
 	private Magnet m;
 	private int fps = 40;
 	private int clickedIndex;
@@ -38,22 +38,12 @@ public class DirectManip extends JPanel {
 				repaint();
 			}
 		};
-		ActionListener clear = new ActionListener() {
-			public void actionPerformed(ActionEvent e){
-				// noob way of "destroying" my blocks
-				for (int i = 0; i < m.blocks.size(); i++){
-					final Block b = m.blocks.get(i);
-					if (b.fillColor == Color.gray)
-						m.blocks.remove(i);
-				}
-			}
-		};
 
+		
 		t = new Timer(1000/fps, repainter);
 		t.start();
 
-		tClear = new Timer(10000/fps, clear);
-		tClear.start();
+
 		
 		Color c = new Color(172, 0, 230);
 		Tractor tractor = new Tractor(50, 500, 0, null, c);
@@ -71,19 +61,11 @@ public class DirectManip extends JPanel {
 		craneParts.add(m);		
 		
 		c = new Color (255, 97, 215);
-		m.blocks.add(new Block(400, 320, 50, 100, 0, null, c));
-		m.blocks.add(new Block(520, 300, 100, 120, 0, null, c));
-//		m.blocks.add(new Block(500, 400, 10, 20, 0, null, c));
-//		m.blocks.add(new Block(600, 300, 10, 20, 0, null, c));
-//		m.blocks.add(new Block(600, 400, 10, 20, 0, null, c));
-		
-//		Random r = new Random();
-//		for (int i = 0; i < 6; i++) {
-//			int x = (r.nextInt(10)+1)*30; // 1 to 10
-//			int width = (r.nextInt(10)+1)*5;
-//			int height = (r.nextInt(10)+1)*5;
-//			Block b = new Block(500+x,0,width,height,0,null,c);
-//		}
+		m.blocks.add(new Block(500, 520, 50, 100, 0, null, c));
+		m.blocks.add(new Block(620, 500, 100, 120, 0, null, c));
+		m.blocks.add(new Block(500, 450, 90, 60, 0, null, c));
+		m.blocks.add(new Block(600, 410, 80, 40, 0, null, c));
+		m.blocks.add(new Block(660, 390, 120, 30, 0, null, c));
 		
 		this.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {				
@@ -92,13 +74,11 @@ public class DirectManip extends JPanel {
 		        for (int i = craneParts.size() - 1; i >= 0; i--) {
 		        	if (craneParts.get(i).isInside(p) ) {
 		        		dragging = true;
-		        		//System.out.println(i);
 		        		clickedIndex = i;
 		        		break;
 		        	}
 		        }
 			}
-
 		    public void mouseReleased(MouseEvent e) {
 		        dragging = false;
 		    }
@@ -131,14 +111,20 @@ public class DirectManip extends JPanel {
 		g.setColor(new Color(128,159,255));
 		g.fillRect(0, 0, 800, 530); // sky
 
+		for (int i = 0; i < m.blocks.size(); i++){
+			final Block b = m.blocks.get(i);
+			//b.translate(0,10);
+			b.paintComponent(g);
+		}
+		
 		for (int i = 0; i < craneParts.size(); i++){
 			final Drawable d = craneParts.get(i);
 			d.paintComponent(g);
 		}
-
 		for (int i = 0; i < m.blocks.size(); i++){
 			final Block b = m.blocks.get(i);
-			b.paintComponent(g);
+			if (b.parent != null) // paint held blocks in front of non held blocks.
+				b.paintComponent(g);
 		}
 		
 		if (m.getOn()){

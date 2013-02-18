@@ -5,8 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+
+import javax.swing.Timer;
 
 
 public class Block extends Drawable {
@@ -16,7 +21,9 @@ public class Block extends Drawable {
 	protected int height, width;
 	protected double angle;
 	protected boolean onItsSide;
-	
+	private Timer tClear; // timer for movement
+	protected int velocity;
+	protected int offset = 0;
 	public Block(int x, int y, int height, int width, double angle, Drawable parent, Color fill) {
 		super(x, y, angle, parent, fill);
 		rect = new Rectangle(-width/2, -height/2, width, height);
@@ -24,6 +31,24 @@ public class Block extends Drawable {
 		this.width = width;
 		this.angle = angle;
 		this.onItsSide = false;
+		this.velocity = 0;
+
+		ActionListener clear = new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+//				if (fillColor == Color.gray){
+//					y += 10;
+//				}
+				repaint();
+//				// my noob way of "destroying" my blocks
+//				for (int i = 0; i < m.blocks.size(); i++){
+//					final Block b = m.blocks.get(i);
+//					if (b.fillColor == Color.gray)
+//						m.blocks.remove(i);
+//				}
+			}
+		};
+		tClear = new Timer(10000/40, clear);
+		tClear.start();
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -40,7 +65,9 @@ public class Block extends Drawable {
 //			//System.out.println("Hello");
 //			g2.rotate(Math.toRadians(-90));
 //		}
-
+		offset +=velocity;
+		y += velocity;
+		g2.translate(0, offset);
 		g2.fill(rect);
 		g2.setColor(Color.black);
 		g2.draw(rect);
@@ -48,9 +75,11 @@ public class Block extends Drawable {
 		g2.setTransform(aiCurr); // set to
 	}
 
-	protected boolean isInside(Point2D p) {
-		Point2D d = p;
-		if (d.getX() > x-width/2 && d.getX() < x+width/2){ // bounds check
+	protected boolean isInside(Point2D p1) {
+		System.out.println(p1.getY()+ " "+y+" "+height/2);
+		double distance = (y-height/2)-1*p1.getY();
+		if (distance < 0) {
+		//if (d.getX() > x-width/2 && d.getX() < x+width/2){ // bounds check
 			return true;
 		} else {
 			return false;
@@ -76,6 +105,7 @@ public class Block extends Drawable {
 //		System.out.println(y + " WHAT " + p.getY());
 //		this.repaint();
 //	}
+
 
 	public int getWidth(){
 		return this.width;
