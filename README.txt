@@ -1,13 +1,12 @@
-CS 349 Assignment 2 README
-Elisa Lou 20372456
+This was a Direct Manipulation project built using Java, built by myself (Elisa Lou). Written for a CS 349 Assignment taught at uWaterloo during the Winter 2013 term.
 
+Disclaimer: Policy 73 at Waterloo defines IP ownership. Students own everything that they produce as a member of the Waterloo community, and the university has no implied ownership in anything created by its students.
 
-Makefile:
+How to Run:
 -"make run" or "make" will compile and run the program.
 -"make clean" will remove all .class files in the cranepackage folder.
 
 Notes:
--All source files are in the "cranepackage" folder.
 -There is an allowed offset of +/- 5 degrees for blocks to be considered "parallel" to the ground.
 -Crane arms are allowed to be rotated fully, 360 degrees. 
 -Assume that the user is able to drag the tractor horizontally via the tracks or the body of the crane.
